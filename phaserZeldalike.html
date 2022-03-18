@@ -1,10 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" /><title>Mon 2eme jeu Phaser</title>
-<script
-src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-<style type="text/css"> body { margin: 0; }</style>
+<meta charset="UTF-8" /><title>Mon 1er jeu Phaser</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js">
+    </script>
+
+    <style type="text/css"> body 
+    
+        { margin: 0; }
+    
+    </style>
 </head>
 <body>
 <script type="text/javascript">
@@ -16,12 +21,15 @@ class scene1 extends Phaser.Scene{
 
     preload(){
         this.load.image('hero', 'assets/test_png.png');
-        this.load.image('map', 'assets/test_map.jpg');
+        this.load.image('map', 'assets/map_test.jpg');
     }
+
     create(){
-        this.add.image(400, 400, 'map');
-        this.add.image(300, 300, 'hero');
+        this.add.image(400, 300, 'map');
+        this.add.image(400, 300, 'hero');
     }
+
+    update(){}
 };
 
 var config = {
@@ -34,9 +42,8 @@ var config = {
         }},
         scene: [scene1]
         };
-        new Phaser.Game(config);       
 
-
+        new Phaser.Game(config);
 
 </script>
 </body>
