@@ -20,16 +20,62 @@ class scene1 extends Phaser.Scene{
     }
 
     preload(){
+        //this.load.image("Phaser_tuilesdejeu", "assets/tuilesJeu.png");
+
+        this.load.tilemapTiledJSON("carte", "assets/tiled level/background_test.json");  
+
         this.load.image('hero', 'assets/test_png.png');
         this.load.spritesheet('heroDownWalk', 'assets/Fusette_down_walk.png',
         { frameWidth: 32, frameHeight: 32 });
         this.load.image('map', 'assets/map_test.jpg');
+
+        this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test.json');
+        this.load.image("Phaser_tuilesdejeu", 'assets/tiled level/background tiles.png');
+
     }
 
     create(){
-        this.cameras.main.zoom = 2;
-
         this.add.image(400, 300, 'map');
+        /*
+        //CARTE DU NIVEAU
+        const carteDuNiveau = this.add.tilemap("Background");
+
+            // importer TileSet 
+            const tileset = carteDuNiveau.addTilesetImage(
+                    "background",
+                    "Phaser_tuilesdejeu"
+                    );                    
+
+            // importer les calques 
+            const fond = carteDuNiveau.createStaticLayer(
+                    "fond",
+                    tileset
+                    );
+            const blocs = carteDuNiveau.createStaticLayer(
+                    "blocs",
+                    tileset
+                    );*/
+
+                    //TEST TILES
+            const carteDuNiveau = this.add.tilemap("carte");
+
+            // importer TileSet 
+            const tileset = carteDuNiveau.addTilesetImage(
+                    "background",
+                    "Phaser_tuilesdejeu"
+                    );                    
+
+            // importer les calques 
+            const fond = carteDuNiveau.createStaticLayer(
+                    "fond",
+                    tileset
+                    );
+            const décor_background = carteDuNiveau.createStaticLayer(
+                    "blocs",
+                    tileset
+                    ); 
+
+        //PERSONNAGE
         this.player = this.physics.add.sprite(160, 90, 'hero');
 
         this.anims.create({
@@ -40,6 +86,13 @@ class scene1 extends Phaser.Scene{
             });
 
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        //CAMERA
+        //this.cameras.main.zoom = 2;
+
+        //this.physics.world.setBounds(0, 0, 5760, 1080);
+        this.cameras.main.setBounds(0, 0, 5760, 1080);
+        this.cameras.main.startFollow(this.player);  
     }
 
     update(){
