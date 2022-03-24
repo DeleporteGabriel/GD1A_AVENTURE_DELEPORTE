@@ -56,27 +56,13 @@ class scene1 extends Phaser.Scene{
                     tileset
                     );
 
-                    //TEST TILES
-            /*const carteDuNiveau = this.add.tilemap("carte");
-
-            // importer TileSet 
-            const tileset = carteDuNiveau.addTilesetImage(
-                    "background",
-                    "Phaser_tuilesdejeu"
-                    );                    
-
-            // importer les calques 
-            const fond = carteDuNiveau.createStaticLayer(
-                    "fond",
-                    tileset
-                    );
-            const décor_background = carteDuNiveau.createStaticLayer(
-                    "blocs",
-                    tileset
-                    ); */
-
         //PERSONNAGE
         this.player = this.physics.add.sprite(160, 90, 'hero');
+        this.player.setSize(24, 20)
+        this.player.setOffset(4, 12)  
+
+        blocs.setCollisionByProperty({ estSolide: true });       
+        this.physics.add.collider(this.player, blocs);
 
         this.anims.create({
                 key: 'FusetteWalkDown',
@@ -103,17 +89,17 @@ class scene1 extends Phaser.Scene{
             }
             else {
                 if (this.player.body.velocity.x != 0) {
-                    this.player.setVelocityY(-100);
+                    this.player.setVelocityY(-50);
                 } else {
-                    this.player.setVelocityY(-150);
+                    this.player.setVelocityY(-75);
                 }
             }
         }
         else if (this.cursors.down.isDown){
             if (this.player.body.velocity.x != 0) {
-                    this.player.setVelocityY(100);
+                    this.player.setVelocityY(50);
                 } else {
-                    this.player.setVelocityY(150);
+                    this.player.setVelocityY(75);
                 }
         }
         else {this.player.setVelocityY(0);}
@@ -124,17 +110,17 @@ class scene1 extends Phaser.Scene{
             }
             else {
                 if (this.player.body.velocity.y != 0) {
-                    this.player.setVelocityX(-100);
+                    this.player.setVelocityX(-50);
                 } else {
-                    this.player.setVelocityX(-150);
+                    this.player.setVelocityX(-75);
                 }
             }
         }
         else if (this.cursors.right.isDown){
             if (this.player.body.velocity.y != 0) {
-                    this.player.setVelocityX(100);
+                    this.player.setVelocityX(50);
                 } else {
-                    this.player.setVelocityX(150);
+                    this.player.setVelocityX(75);
                 }
         }
         else {this.player.setVelocityX(0);}

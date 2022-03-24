@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="1">
+ <editorsettings>
+  <export target="background_test2.json" format="json"/>
+ </editorsettings>
  <tileset firstgid="1" name="background" tilewidth="32" tileheight="32" tilecount="100" columns="10">
   <image source="background tiles.png" width="320" height="320"/>
   <tile id="0">
@@ -82,6 +85,9 @@
     <property name="estSolide" type="bool" value="true"/>
    </properties>
   </tile>
+ </tileset>
+ <tileset firstgid="101" name="Full Tileset Render" tilewidth="16" tileheight="16" tilecount="0" columns="17">
+  <image source="../../../../../Desktop/update/Niveau tuiles/Full Tileset Render.PNG" width="272" height="672"/>
  </tileset>
  <layer id="1" name="fond" width="32" height="18">
   <data encoding="csv">
