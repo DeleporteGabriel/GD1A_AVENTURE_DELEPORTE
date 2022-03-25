@@ -26,6 +26,7 @@ class scene1 extends Phaser.Scene{
         this.load.spritesheet('heroWalk', 'assets/sprite sheets fusette.png',
         { frameWidth: 32, frameHeight: 32 });
         this.load.image('map', 'assets/map_test.jpg');
+        this.load.image('bullet', 'asset/bullet test.png');
         
         //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
@@ -127,8 +128,8 @@ class scene1 extends Phaser.Scene{
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keys = this.input.keyboard.addKeys({
-            z: this.input.keyboard.addKeys('Z')
-        })
+            z:  Phaser.Input.Keyboard.KeyCodes.Z,
+        });
 
         //CAMERA
         this.cameras.main.zoom = 2;
@@ -136,11 +137,12 @@ class scene1 extends Phaser.Scene{
         this.cameras.main.setBounds(0, 0, 5760, 1080);
         this.cameras.main.startFollow(this.player);  
 
-
     }
 
     update(){
-        if (this.cursors.z.isDown) {this.attaque = true;}
+        if (this.keys.z.isDown) {if (this.attaque == false) {
+            this.attaque = true;
+        }}
 
         //Déplacement vertical
         if (this.cursors.up.isDown){
@@ -188,7 +190,10 @@ class scene1 extends Phaser.Scene{
         //animations
 
         if (this.attaque == true) {
-            this.player.anim.play('FusetteShootLeft')
+            this.player.anims.play('FusetteShootLeft', true);
+            this.player.setVelocityX(50);
+            if (this.player.anims.currentFrame.index == 3) {this.attaque = false; this.player.anims.play('idleLeft', true);}
+
         }
         else {
         if (this.player.body.velocity.y > 0) {
