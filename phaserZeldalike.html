@@ -22,20 +22,19 @@ class scene1 extends Phaser.Scene{
     preload(){
         //this.load.image("Phaser_tuilesdejeu", "assets/tuilesJeu.png");
 
-        this.load.tilemapTiledJSON("carte", "assets/tiled level/background_test.json");  
-
-        this.load.image('hero', 'assets/test_png.png');
+        //this.load.image('hero', 'assets/test_png.png');
         this.load.spritesheet('heroWalk', 'assets/sprite sheets fusette.png',
         { frameWidth: 32, frameHeight: 32 });
         this.load.image('map', 'assets/map_test.jpg');
-
+        
+        //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
         this.load.image("Phaser_tuilesdejeu", 'assets/tiled level/background tiles.png');
 
     }
 
     create(){
-        this.add.image(400, 300, 'map');
+        //this.add.image(400, 300, 'map');
         
         //CARTE DU NIVEAU
         const carteDuNiveau = this.add.tilemap("Background");
@@ -57,11 +56,12 @@ class scene1 extends Phaser.Scene{
                     );
 
         //PERSONNAGE
-        this.player = this.physics.add.sprite(160, 90, 'hero');
+        this.player = this.physics.add.sprite(160, 90, 'heroWalk');
         this.player.setSize(24, 20)
         this.player.setOffset(4, 12)  
 
         this.direction = 0;
+        this.attaque = false;
 
         blocs.setCollisionByProperty({ estSolide: true });       
         this.physics.add.collider(this.player, blocs);
@@ -90,18 +90,58 @@ class scene1 extends Phaser.Scene{
                 frameRate: 10,
                 repeat: -1
             });
+        //static frame
+        this.anims.create({
+                key: 'idleDown',
+                frames: [ { key: 'heroWalk', frame: 0 } ],
+                frameRate: 20
+            });
+        this.anims.create({
+                key: 'idleUp',
+                frames: [ { key: 'heroWalk', frame: 4 } ],
+                frameRate: 20
+            });
+        this.anims.create({
+                key: 'idleLeft',
+                frames: [ { key: 'heroWalk', frame: 8 } ],
+                frameRate: 20
+            });
+        this.anims.create({
+                key: 'idleRight',
+                frames: [ { key: 'heroWalk', frame: 12 } ],
+                frameRate: 20
+            });
+        //Attack
+        this.anims.create({
+                key: 'FusetteShootLeft',
+                frames: this.anims.generateFrameNumbers('heroWalk', {start:16,end:19}),
+                frameRate: 10,
+                repeat: -1
+            });
+        this.anims.create({
+                key: 'Raid1',
+                frames: [ { key: 'heroWalk', frame: 26 } ],
+                frameRate: 20
+            });
+ 
 
         this.cursors = this.input.keyboard.createCursorKeys();
+        this.keys = this.input.keyboard.addKeys({
+            z: this.input.keyboard.addKeys('Z')
+        })
 
         //CAMERA
         this.cameras.main.zoom = 2;
 
-        //this.physics.world.setBounds(0, 0, 5760, 1080);
         this.cameras.main.setBounds(0, 0, 5760, 1080);
         this.cameras.main.startFollow(this.player);  
+
+
     }
 
     update(){
+        if (this.cursors.z.isDown) {this.attaque = true;}
+
         //Déplacement vertical
         if (this.cursors.up.isDown){
             if (this.cursors.down.isDown) {
@@ -109,17 +149,17 @@ class scene1 extends Phaser.Scene{
             }
             else {
                 if (this.player.body.velocity.x != 0) {
-                    this.player.setVelocityY(-50);
+                    this.player.setVelocityY(-80);
                 } else {
-                    this.player.setVelocityY(-75);
+                    this.player.setVelocityY(-100);
                 }
             }
         }
         else if (this.cursors.down.isDown){
             if (this.player.body.velocity.x != 0) {
-                    this.player.setVelocityY(50);
+                    this.player.setVelocityY(80);
                 } else {
-                    this.player.setVelocityY(75);
+                    this.player.setVelocityY(100);
                 }
         }
         else {this.player.setVelocityY(0);}
@@ -130,41 +170,54 @@ class scene1 extends Phaser.Scene{
             }
             else {
                 if (this.player.body.velocity.y != 0) {
-                    this.player.setVelocityX(-50);
+                    this.player.setVelocityX(-80);
                 } else {
-                    this.player.setVelocityX(-75);
+                    this.player.setVelocityX(-100);
                 }
             }
         }
         else if (this.cursors.right.isDown){
             if (this.player.body.velocity.y != 0) {
-                    this.player.setVelocityX(50);
+                    this.player.setVelocityX(80);
                 } else {
-                    this.player.setVelocityX(75);
+                    this.player.setVelocityX(100);
                 }
         }
         else {this.player.setVelocityX(0);}
 
+        //animations
+
+        if (this.attaque == true) {
+            this.player.anim.play('FusetteShootLeft')
+        }
+        else {
         if (this.player.body.velocity.y > 0) {
-            if (this.player.body.velocity.x == 0)
-            {
-                this.player.anims.play('FusetteWalkDown', true);
-            }
+            this.player.anims.play('FusetteWalkDown', true);
+                this.direction = 0;
         }
         else if (this.player.body.velocity.y < 0) {
-            if (this.player.body.velocity.x == 0)
-            {
                 this.player.anims.play('FusetteWalkUp', true);
-            }
+                this.direction = 1;
         }
         else {
             if (this.player.body.velocity.x > 0){
                 this.player.anims.play('FusetteWalkRight', true);
+                this.direction = 3;
             }
             else if (this.player.body.velocity.x < 0){
                 this.player.anims.play('FusetteWalkLeft', true);
+                this.direction = 2;
             }
         }
+
+        if (this.player.body.velocity.y == 0) {if (this.player.body.velocity.x == 0) {
+            {
+                if (this.direction == 0) {this.player.anims.play('idleDown');}
+                else if (this.direction == 1) {this.player.anims.play('idleUp');}
+                else if (this.direction == 2) {this.player.anims.play('idleLeft');}
+                else if (this.direction == 3) {this.player.anims.play('idleRight');}
+            }
+        }}}
 
 
     }
@@ -176,8 +229,10 @@ var config = {
         physics: {
         default: 'arcade',
         arcade: {
-        debug: false
+        debug: true
         }},
+        pixelArt: true,
+        roundPixels: true,
         scene: [scene1]
         };
 
