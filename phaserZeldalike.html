@@ -33,6 +33,9 @@ class scene1 extends Phaser.Scene{
         this.load.image('bullet_right', 'assets/raidright.png');
         this.load.image('bullet_up', 'assets/raidup.png');
         this.load.image('bullet_down', 'assets/raiddown.png');
+
+        //decors
+        this.load.image('tag', 'assets/tag.png')
         
         //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
@@ -61,11 +64,20 @@ class scene1 extends Phaser.Scene{
                     tileset
                     );
 
+            this.tags = this.physics.add.group()
+
+            this.physics.add.collider(this.tags, blocs);
+        
+            this.tag = this.tags.create(30 * 32 + 16, 8 * 32 + 16, 'tag');
+            this.tag = this.tags.create(24 * 32 + 16, 11 * 32 + 16, 'tag');
+
+            this.tag = this.tags.create(8 * 32 + 16, 13 * 32 + 16, 'tag');
+
         //PERSONNAGE
-        this.player = this.physics.add.sprite(160, 90, 'heroWalk');
+        this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
         this.player.setSize(24, 20)
         this.player.setOffset(4, 12)  
-
+        
         this.direction = 0;
         this.attaque = false;
 
@@ -148,6 +160,15 @@ class scene1 extends Phaser.Scene{
             raid.destroy();
         }
 
+        function destroytag(raid, tag) {
+            if (raid.body.velocity.x > 0) {tag.setVelocityX(200)}
+            else if (raid.body.velocity.x < 0) {tag.setVelocityX(-200)}
+            else if (raid.body.velocity.y > 0) {tag.setVelocityY(200)}
+            else if (raid.body.velocity.y < 0) {tag.setVelocityY(-200)}
+
+            raid.destroy();
+        }
+
         this.raids = this.physics.add.group();
         this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
@@ -155,6 +176,8 @@ class scene1 extends Phaser.Scene{
         this.keys = this.input.keyboard.addKeys({
             z:  Phaser.Input.Keyboard.KeyCodes.Z,
         });
+
+        this.physics.add.collider(this.raids, this.tags, destroytag, null, this);
 
         //CAMERA
         this.cameras.main.zoom = 2;
