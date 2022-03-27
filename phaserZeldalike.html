@@ -26,6 +26,7 @@ class scene1 extends Phaser.Scene{
         this.load.spritesheet('heroWalk', 'assets/sprite sheets fusette.png',
         { frameWidth: 32, frameHeight: 32 });
         this.load.image('map', 'assets/map_test.jpg');
+        this.load.image('spritePV', 'assets/point de vie.png');
 
         //raids
         this.load.image('bullet_left', 'assets/raidtest.png');
@@ -39,9 +40,8 @@ class scene1 extends Phaser.Scene{
 
     }
 
-    create(){
-        //this.add.image(400, 300, 'map');
-        
+    create(){  
+
         //CARTE DU NIVEAU
         const carteDuNiveau = this.add.tilemap("Background");
 
@@ -160,7 +160,14 @@ class scene1 extends Phaser.Scene{
         this.cameras.main.zoom = 2;
 
         this.cameras.main.setBounds(0, 0, 5760, 1080);
-        this.cameras.main.startFollow(this.player);  
+        this.cameras.main.startFollow(this.player);
+
+        this.PointVie1 = this.add.image(24 + 240, 24 + 135,'spritePV');
+        this.PointVie1.setScrollFactor(0);
+        this.PointVie2 = this.add.image(24 + 240 + 48, 24 + 135,'spritePV');
+        this.PointVie2.setScrollFactor(0);
+        this.PointVie3 = this.add.image(24 + 240 + 48*2, 24 + 135,'spritePV');
+        this.PointVie3.setScrollFactor(0);
 
     }
 
