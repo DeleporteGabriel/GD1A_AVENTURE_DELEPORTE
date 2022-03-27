@@ -26,7 +26,7 @@ class scene1 extends Phaser.Scene{
         this.load.spritesheet('heroWalk', 'assets/sprite sheets fusette.png',
         { frameWidth: 32, frameHeight: 32 });
         this.load.image('map', 'assets/map_test.jpg');
-        this.load.image('bullet', 'asset/bullet test.png');
+        this.load.image('bullet', 'assets/raidtest.png');
         
         //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
@@ -119,12 +119,13 @@ class scene1 extends Phaser.Scene{
                 frameRate: 10,
                 repeat: -1
             });
-        this.anims.create({
-                key: 'Raid1',
-                frames: [ { key: 'heroWalk', frame: 26 } ],
-                frameRate: 20
-            });
- 
+        
+        function hitraids(raid, blocs){
+            raid.destroy();
+        }
+
+        this.raids = this.physics.add.group();
+        this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keys = this.input.keyboard.addKeys({
@@ -142,6 +143,19 @@ class scene1 extends Phaser.Scene{
     update(){
         if (this.keys.z.isDown) {if (this.attaque == false) {
             this.attaque = true;
+            this.raid = this.raids.create(this.player.x, this.player.y, 'bullet');
+            if (this.direction == 0) {
+                this.raid.setVelocityY(200);
+            }
+            else if (this.direction == 1) {
+                this.raid.setVelocityY(-200);
+            }
+            else if (this.direction == 2) {
+                this.raid.setVelocityX(-200);
+            }
+            else if (this.direction == 3) {
+                this.raid.setVelocityX(200);
+            }
         }}
 
         //Déplacement vertical
@@ -191,7 +205,18 @@ class scene1 extends Phaser.Scene{
 
         if (this.attaque == true) {
             this.player.anims.play('FusetteShootLeft', true);
-            this.player.setVelocityX(50);
+            if (this.direction == 0) {
+                this.player.setVelocityY(-50);
+            }
+            else if (this.direction == 1) {
+                this.player.setVelocityY(50);
+            }
+            else if (this.direction == 2) {
+                this.player.setVelocityX(50);
+            }
+            else if (this.direction == 3) {
+                this.player.setVelocityX(-50);
+            }
             if (this.player.anims.currentFrame.index == 3) {this.attaque = false; this.player.anims.play('idleLeft', true);}
 
         }
@@ -234,7 +259,7 @@ var config = {
         physics: {
         default: 'arcade',
         arcade: {
-        debug: true
+        debug: false
         }},
         pixelArt: true,
         roundPixels: true,
