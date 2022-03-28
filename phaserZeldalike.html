@@ -42,6 +42,7 @@ class scene1 extends Phaser.Scene{
 
         //decors
         this.load.image('tag', 'assets/tag.png')
+        this.load.image('messageChat', 'assets/bloc texte.png')
         
         //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
@@ -75,14 +76,53 @@ class scene1 extends Phaser.Scene{
                     );
             emoteblocs.visible = false;
 
+            //bloc à pousser
             this.tags = this.physics.add.group()
 
             this.physics.add.collider(this.tags, blocs);
         
-            this.tag = this.tags.create(30 * 32 + 16, 8 * 32 + 16, 'tag');
-            this.tag = this.tags.create(23 * 32 + 16, 11 * 32 + 16, 'tag');
+            this.tag1 = this.tags.create(30 * 32 + 16, 8 * 32 + 16, 'tag');
+            this.tag2 = this.tags.create(23 * 32 + 16, 11 * 32 + 16, 'tag');
 
-            this.tag = this.tags.create(8 * 32 + 16, 13 * 32 + 16, 'tag');
+            this.tag3 = this.tags.create(8 * 32 + 16, 13 * 32 + 16, 'tag');
+
+            //bloc qui bougent
+            this.chats = this.physics.add.staticGroup();
+
+            this.chat1 = this.chats.create(1 * 32 + 80, 16 * 32, 'messageChat')
+            this.chat1.setSize(96, 64);
+            this.chat1.setOffset(0, 0);
+
+            this.chat2 = this.chats.create(1 * 32 + 80, 14 * 32, 'messageChat')
+            this.chat2.setTint(0xff0000);
+            this.chat2.setSize(96, 64);
+            this.chat2.setOffset(0, 0);
+
+            this.chat3 = this.chats.create(1 * 32 + 80, 12 * 32, 'messageChat')
+            this.chat3.setTint(0xff00ff);
+            this.chat3.setSize(96, 64);
+            this.chat3.setOffset(0, 0);
+
+            this.chat4 = this.chats.create(1 * 32 + 80, 10 * 32, 'messageChat')
+            this.chat4.setTint(0xff8888);
+            this.chat4.setSize(96, 64);
+            this.chat4.setOffset(0, 0);
+
+            this.chat5 = this.chats.create(1 * 32 + 80, 8 * 32, 'messageChat')
+            this.chat5.setTint(0x000000);
+            this.chat5.setSize(96, 64);
+            this.chat5.setOffset(0, 0);
+
+            this.chat6 = this.chats.create(1 * 32 + 80, 6 * 32, 'messageChat')
+            this.chat6.setTint(0x00ff00);
+            this.chat6.setSize(96, 64);
+            this.chat6.setOffset(0, 0);
+
+            this.chatTimer = 0;
+            this.chatTop = 6;
+
+            this.physics.add.collider(this.chats, this.chats);
+            this.physics.add.collider(blocs, this.chats);
 
         //PERSONNAGE
         this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
@@ -94,6 +134,8 @@ class scene1 extends Phaser.Scene{
 
         blocs.setCollisionByProperty({ estSolide: true });       
         this.physics.add.collider(this.player, blocs);
+        this.physics.add.collider(this.player, this.chats);
+
         //animation
         this.anims.create({
                 key: 'FusetteWalkDown',
@@ -238,8 +280,75 @@ class scene1 extends Phaser.Scene{
         this.physics.add.overlap(this.player, this.emotes, playerHit, null, this);
 
     }
-
+//UPDATE UPDATE UPDATE UPDATE UPDATE UPDATE UPDATE UPDATE
     update(){
+        //blocs qui bougent
+        this.chatTimer += 1;
+        if (this.chatTimer == 300) {
+            this.chatTimer = 0;
+
+            if (this.player.x < 6*32) {
+                if (this.player.y > 5*32) {
+                    this.player.y -= 64;
+                }
+            }
+
+            if (this.chatTop == 6){
+                this.chat1.y = 14*32;
+                this.chat2.y = 12*32;
+                this.chat3.y = 10*32;
+                this.chat4.y = 8*32;
+                this.chat5.y = 6*32;
+                this.chat6.y = 16*32;
+            }
+            else if (this.chatTop == 5){
+                this.chat1.y = 12*32;
+                this.chat2.y = 10*32;
+                this.chat3.y = 8*32;
+                this.chat4.y = 6*32;
+                this.chat5.y = 16*32;
+                this.chat6.y = 14*32;
+            }
+            else if (this.chatTop == 4){
+                this.chat1.y = 10*32;
+                this.chat2.y = 8*32;
+                this.chat3.y = 6*32;
+                this.chat4.y = 16*32;
+                this.chat5.y = 14*32;
+                this.chat6.y = 12*32;
+            }
+            else if (this.chatTop == 3){
+                this.chat1.y = 8*32;
+                this.chat2.y = 6*32;
+                this.chat3.y = 16*32;
+                this.chat4.y = 14*32;
+                this.chat5.y = 12*32;
+                this.chat6.y = 10*32;
+            }
+            else if (this.chatTop == 2){
+                this.chat1.y = 6*32;
+                this.chat2.y = 16*32;
+                this.chat3.y = 14*32;
+                this.chat4.y = 12*32;
+                this.chat5.y = 10*32;
+                this.chat6.y = 8*32;
+            }
+            else if (this.chatTop == 1){
+                this.chat1.y = 16*32;
+                this.chat2.y = 14*32;
+                this.chat3.y = 12*32;
+                this.chat4.y = 10*32;
+                this.chat5.y = 8*32;
+                this.chat6.y = 6*32;
+            }
+
+
+            this.chatTop -= 1;
+            if (this.chatTop == 0) {
+                this.chatTop = 6;
+            }
+        }
+
         //Point de vies
 
         if (this.PointCoeur < 3) {this.PointVie3.setTexture('spritePVvide');}
