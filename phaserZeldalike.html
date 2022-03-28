@@ -27,6 +27,12 @@ class scene1 extends Phaser.Scene{
         { frameWidth: 32, frameHeight: 32 });
         this.load.image('map', 'assets/map_test.jpg');
         this.load.image('spritePV', 'assets/point de vie.png');
+        this.load.image('spritePVvide', 'assets/point de vie vide.png');
+
+        //ennemis
+        this.load.image('lul', 'assets/emoteLuL.png');
+        this.load.image('kappa', 'assets/emoteKappa.png');
+        this.load.image('pogg', 'assets/emotePogg.png');
 
         //raids
         this.load.image('bullet_left', 'assets/raidtest.png');
@@ -63,13 +69,18 @@ class scene1 extends Phaser.Scene{
                     "blocs",
                     tileset
                     );
+            const emoteblocs = carteDuNiveau.createStaticLayer(
+                    "emote_wall",
+                    tileset
+                    );
+            emoteblocs.visible = false;
 
             this.tags = this.physics.add.group()
 
             this.physics.add.collider(this.tags, blocs);
         
             this.tag = this.tags.create(30 * 32 + 16, 8 * 32 + 16, 'tag');
-            this.tag = this.tags.create(24 * 32 + 16, 11 * 32 + 16, 'tag');
+            this.tag = this.tags.create(23 * 32 + 16, 11 * 32 + 16, 'tag');
 
             this.tag = this.tags.create(8 * 32 + 16, 13 * 32 + 16, 'tag');
 
@@ -179,11 +190,36 @@ class scene1 extends Phaser.Scene{
 
         this.physics.add.collider(this.raids, this.tags, destroytag, null, this);
 
+        //EMOTE
+
+        this.emotes = this.physics.add.group();
+        this.emote = this.emotes.create(9*32 + 16, 8*32 + 16, 'pogg');
+        this.emote.setVelocityX(75);
+        this.emote.setVelocityY(75);
+        this.emote.setBounce(1);
+        this.emote = this.emotes.create(11*32 + 16, 8*32 + 16, 'kappa');
+        this.emote.setVelocityX(-100);
+        this.emote.setVelocityY(50);
+        this.emote.setBounce(1);
+        this.emote = this.emotes.create(13*32 + 16, 8*32 + 16, 'lul');
+        this.emote.setVelocityX(50);
+        this.emote.setVelocityY(-100);
+        this.emote.setBounce(1);
+
+        emoteblocs.setCollisionByProperty({ emoteSolide: true });
+        this.physics.add.collider(this.emotes, emoteblocs);
+        
+
         //CAMERA
         this.cameras.main.zoom = 2;
 
-        this.cameras.main.setBounds(0, 0, 5760, 1080);
+        this.cameras.main.setBounds(0, 0, 32*32, 18*32);
         this.cameras.main.startFollow(this.player);
+
+
+        //LIFE MANAGER
+        this.PointCoeur = 3;
+        this.invincibleFrame = false;
 
         this.PointVie1 = this.add.image(24 + 240, 24 + 135,'spritePV');
         this.PointVie1.setScrollFactor(0);
@@ -192,9 +228,34 @@ class scene1 extends Phaser.Scene{
         this.PointVie3 = this.add.image(24 + 240 + 48*2, 24 + 135,'spritePV');
         this.PointVie3.setScrollFactor(0);
 
+        function playerHit(player, emote) {
+            if (this.invincibleFrame == 0) {
+                this.PointCoeur -= 1;
+                this.invincibleFrame = 40;
+            }
+        }
+
+        this.physics.add.overlap(this.player, this.emotes, playerHit, null, this);
+
     }
 
     update(){
+        //Point de vies
+
+        if (this.PointCoeur < 3) {this.PointVie3.setTexture('spritePVvide');}
+        if (this.PointCoeur < 2) {this.PointVie2.setTexture('spritePVvide');}
+        if (this.PointCoeur < 1) {this.PointVie1.setTexture('spritePVvide');}
+
+        if (this.invincibleFrame != 0) {
+            this.player.setTint(0xff8888);
+            this.invincibleFrame -= 1;
+        }
+        else {
+            this.player.setTint(0xffffff);
+        }
+
+        //attaque
+
         if (this.keys.z.isDown) {if (this.attaque == false) {
             this.attaque = true;
             if (this.direction == 0) {
