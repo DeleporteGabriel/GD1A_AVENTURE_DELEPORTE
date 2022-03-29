@@ -49,7 +49,6 @@ class scene1 extends Phaser.Scene{
         //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
         this.load.image("Phaser_tuilesdejeu", 'assets/tiled level/background tiles.png');
-
     }
 
     create(){  
@@ -447,6 +446,7 @@ class scene1 extends Phaser.Scene{
         //attaque
 
         if (this.keys.z.isDown) {if (this.attaque == false) {
+            this.scene.start('scene2');
             this.attaque = true;
             if (this.direction == 0) {
                 this.raid = this.raids.create(this.player.x, this.player.y, 'bullet_down');
@@ -566,6 +566,306 @@ class scene1 extends Phaser.Scene{
     }
 };
 
+class scene2 extends Phaser.Scene{
+    constructor(){
+        super("scene2");
+    }
+
+    preload() {
+
+        this.load.spritesheet('heroWalk', 'assets/sprite sheets fusette.png',
+        { frameWidth: 32, frameHeight: 32 });
+        this.load.image('map', 'assets/map_test.jpg');
+        this.load.image('spritePV', 'assets/point de vie.png');
+        this.load.image('spritePVvide', 'assets/point de vie vide.png');
+
+        //raids
+        this.load.image('bullet_left', 'assets/raidtest.png');
+        this.load.image('bullet_right', 'assets/raidright.png');
+        this.load.image('bullet_up', 'assets/raidup.png');
+        this.load.image('bullet_down', 'assets/raiddown.png');
+
+        this.load.tilemapTiledJSON("Background_discord", 'assets/tiled level/background discord.json');
+        this.load.image("Phaser_tuilesdejeu_discord", 'assets/tiled level/background discord.png');
+    }
+
+    create(){  
+
+//CARTE DU NIVEAU
+const carteDuNiveau = this.add.tilemap("Background_discord");
+
+    // importer TileSet 
+    const tileset = carteDuNiveau.addTilesetImage(
+            "background discord tiles",
+            "Phaser_tuilesdejeu_discord"
+            );                    
+
+    // importer les calques 
+    const fond = carteDuNiveau.createStaticLayer(
+            "fond",
+            tileset
+            );
+    const blocs = carteDuNiveau.createStaticLayer(
+            "blocs",
+            tileset
+            );
+
+//PERSONNAGE
+//this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
+this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');
+this.player.setSize(24, 20)
+this.player.setOffset(4, 12)  
+
+this.direction = 0;
+this.attaque = false;
+
+blocs.setCollisionByProperty({ estSolide: true });       
+this.physics.add.collider(this.player, blocs);
+
+//animation
+this.anims.create({
+        key: 'FusetteWalkDown',
+        frames: this.anims.generateFrameNumbers('heroWalk', {start:0,end:3}),
+        frameRate: 10,
+        repeat: -1
+    });
+this.anims.create({
+        key: 'FusetteWalkUp',
+        frames: this.anims.generateFrameNumbers('heroWalk', {start:4,end:7}),
+        frameRate: 10,
+        repeat: -1
+    });
+this.anims.create({
+        key: 'FusetteWalkLeft',
+        frames: this.anims.generateFrameNumbers('heroWalk', {start:8,end:11}),
+        frameRate: 10,
+        repeat: -1
+    });
+this.anims.create({
+        key: 'FusetteWalkRight',
+        frames: this.anims.generateFrameNumbers('heroWalk', {start:12,end:15}),
+        frameRate: 10,
+        repeat: -1
+    });
+//static frame
+this.anims.create({
+        key: 'idleDown',
+        frames: [ { key: 'heroWalk', frame: 0 } ],
+        frameRate: 20
+    });
+this.anims.create({
+        key: 'idleUp',
+        frames: [ { key: 'heroWalk', frame: 4 } ],
+        frameRate: 20
+    });
+this.anims.create({
+        key: 'idleLeft',
+        frames: [ { key: 'heroWalk', frame: 8 } ],
+        frameRate: 20
+    });
+this.anims.create({
+        key: 'idleRight',
+        frames: [ { key: 'heroWalk', frame: 12 } ],
+        frameRate: 20
+    });
+//Attack
+this.anims.create({
+        key: 'FusetteShootLeft',
+        frames: this.anims.generateFrameNumbers('heroWalk', {start:16,end:19}),
+        frameRate: 10,
+        repeat: -1
+    });
+this.anims.create({
+        key: 'FusetteShootRight',
+        frames: this.anims.generateFrameNumbers('heroWalk', {start:20,end:23}),
+        frameRate: 10,
+        repeat: -1
+    });
+this.anims.create({
+        key: 'FusetteShootUp',
+        frames: this.anims.generateFrameNumbers('heroWalk', {start:28,end:31}),
+        frameRate: 10,
+        repeat: -1
+    });
+this.anims.create({
+        key: 'FusetteShootDown',
+        frames: this.anims.generateFrameNumbers('heroWalk', {start:24,end:27}),
+        frameRate: 10,
+        repeat: -1
+    });
+    
+
+function hitraids(raid){
+    raid.destroy();
+}
+
+this.raids = this.physics.add.group();
+
+this.cursors = this.input.keyboard.createCursorKeys();
+this.keys = this.input.keyboard.addKeys({
+    z:  Phaser.Input.Keyboard.KeyCodes.Z,
+});
+
+this.physics.add.collider(this.raids, blocs, hitraids, null, this);
+
+
+//CAMERA
+this.cameras.main.zoom = 2;
+
+this.cameras.main.setBounds(0, 0, 32*32, 18*32);
+this.cameras.main.startFollow(this.player);
+
+
+//LIFE MANAGER
+this.PointCoeur = 3;
+this.invincibleFrame = false;
+
+this.PointVie1 = this.add.image(24 + 240, 24 + 135,'spritePV');
+this.PointVie1.setScrollFactor(0);
+this.PointVie2 = this.add.image(24 + 240 + 48, 24 + 135,'spritePV');
+this.PointVie2.setScrollFactor(0);
+this.PointVie3 = this.add.image(24 + 240 + 48*2, 24 + 135,'spritePV');
+this.PointVie3.setScrollFactor(0);
+}
+
+update(){
+        //Point de vies
+
+        if (this.PointCoeur < 3) {this.PointVie3.setTexture('spritePVvide');}
+        if (this.PointCoeur < 2) {this.PointVie2.setTexture('spritePVvide');}
+        if (this.PointCoeur < 1) {this.PointVie1.setTexture('spritePVvide');}
+
+        if (this.invincibleFrame != 0) {
+            this.player.setTint(0xff8888);
+            this.invincibleFrame -= 1;
+        }
+        else {
+            this.player.setTint(0xffffff);
+        }
+
+        //attaque
+
+        if (this.keys.z.isDown) {if (this.attaque == false) {
+            this.attaque = true;
+            if (this.direction == 0) {
+                this.raid = this.raids.create(this.player.x, this.player.y, 'bullet_down');
+                this.raid.setVelocityY(200);
+            }
+            else if (this.direction == 1) {
+                this.raid = this.raids.create(this.player.x, this.player.y, 'bullet_up');
+                this.raid.setVelocityY(-200);
+            }
+            else if (this.direction == 2) {
+                this.raid = this.raids.create(this.player.x, this.player.y, 'bullet_left');
+                this.raid.setVelocityX(-200);
+            }
+            else if (this.direction == 3) {
+                this.raid = this.raids.create(this.player.x, this.player.y, 'bullet_right');
+                this.raid.setVelocityX(200);
+            }
+            this.raid.setSize(20, 20);
+            this.raid.setOffset(8, 8);
+        }}
+
+        //Déplacement vertical
+        if (this.cursors.up.isDown){
+            if (this.cursors.down.isDown) {
+                this.player.setVelocityY(0);
+            }
+            else {
+                if (this.player.body.velocity.x != 0) {
+                    this.player.setVelocityY(-80);
+                } else {
+                    this.player.setVelocityY(-100);
+                }
+            }
+        }
+        else if (this.cursors.down.isDown){
+            if (this.player.body.velocity.x != 0) {
+                    this.player.setVelocityY(80);
+                } else {
+                    this.player.setVelocityY(100);
+                }
+        }
+        else {this.player.setVelocityY(0);}
+        //Déplacement horizontal
+        if (this.cursors.left.isDown){
+            if (this.cursors.right.isDown) {
+                this.player.setVelocityX(0);
+            }
+            else {
+                if (this.player.body.velocity.y != 0) {
+                    this.player.setVelocityX(-80);
+                } else {
+                    this.player.setVelocityX(-100);
+                }
+            }
+        }
+        else if (this.cursors.right.isDown){
+            if (this.player.body.velocity.y != 0) {
+                    this.player.setVelocityX(80);
+                } else {
+                    this.player.setVelocityX(100);
+                }
+        }
+        else {this.player.setVelocityX(0);}
+
+        //animations
+
+        if (this.attaque == true) {
+            if (this.direction == 0) {
+                this.player.anims.play('FusetteShootDown', true);
+                this.player.setVelocityY(-50);
+            }
+            else if (this.direction == 1) {
+                this.player.anims.play('FusetteShootUp', true);
+                this.player.setVelocityY(50);
+            }
+            else if (this.direction == 2) {
+                this.player.anims.play('FusetteShootLeft', true);
+                this.player.setVelocityX(50);
+            }
+            else if (this.direction == 3) {
+                this.player.anims.play('FusetteShootRight', true);
+                this.player.setVelocityX(-50);
+            }
+            if (this.player.anims.currentFrame.index == 3) {this.attaque = false;}
+
+        }
+        else {
+        if (this.player.body.velocity.y > 0) {
+            this.player.anims.play('FusetteWalkDown', true);
+                this.direction = 0;
+        }
+        else if (this.player.body.velocity.y < 0) {
+                this.player.anims.play('FusetteWalkUp', true);
+                this.direction = 1;
+        }
+        else {
+            if (this.player.body.velocity.x > 0){
+                this.player.anims.play('FusetteWalkRight', true);
+                this.direction = 3;
+            }
+            else if (this.player.body.velocity.x < 0){
+                this.player.anims.play('FusetteWalkLeft', true);
+                this.direction = 2;
+            }
+        }
+
+        if (this.player.body.velocity.y == 0) {if (this.player.body.velocity.x == 0) {
+            {
+                if (this.direction == 0) {this.player.anims.play('idleDown');}
+                else if (this.direction == 1) {this.player.anims.play('idleUp');}
+                else if (this.direction == 2) {this.player.anims.play('idleLeft');}
+                else if (this.direction == 3) {this.player.anims.play('idleRight');}
+            }
+        }}}
+
+
+    }
+
+}
+
 var config = {
         type: Phaser.AUTO,
         width: 960, height: 540,
@@ -576,7 +876,7 @@ var config = {
         }},
         pixelArt: true,
         roundPixels: true,
-        scene: [scene1]
+        scene: [scene1, scene2]
         };
 
         new Phaser.Game(config);
