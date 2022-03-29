@@ -42,7 +42,9 @@ class scene1 extends Phaser.Scene{
 
         //decors
         this.load.image('tag', 'assets/tag.png')
-        this.load.image('messageChat', 'assets/bloc texte.png')
+        this.load.image('messageChat_right', 'assets/bloc texte 1.png')
+        this.load.image('messageChat_left', 'assets/bloc texte 2.png')
+        this.load.image('messageChat_middle', 'assets/bloc texte 3.png')
         
         //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
@@ -92,34 +94,35 @@ class scene1 extends Phaser.Scene{
             //bloc qui bougent
             this.chats = this.physics.add.staticGroup();
 
-            this.chat1 = this.chats.create(1 * 32 + 80, 16 * 32, 'messageChat')
-            this.chat1.setSize(96, 64);
-            this.chat1.setOffset(0, 0);
+            this.chat1 = this.chats.create(1 * 32 + 80, 16 * 32, 'messageChat_right');
+            this.chat1.setSize(96, 32);
+            this.chat1.setOffset(8, 8);
 
-            this.chat2 = this.chats.create(1 * 32 + 80, 14 * 32, 'messageChat')
-            this.chat2.setTint(0xff0000);
-            this.chat2.setSize(96, 64);
-            this.chat2.setOffset(0, 0);
+            this.chat2 = this.chats.create(1 * 32 + 80, 14 * 32, 'messageChat_left');
+            this.chat2.setSize(96, 32);
+            this.chat2.setOffset(8 + 48, 8);
 
-            this.chat3 = this.chats.create(1 * 32 + 80, 12 * 32, 'messageChat')
-            this.chat3.setTint(0xff00ff);
-            this.chat3.setSize(96, 64);
-            this.chat3.setOffset(0, 0);
+            this.chat3 = this.chats.create(1 * 32 + 80, 12 * 32, 'messageChat_right');
+            this.chat3.setSize(96, 32);
+            this.chat3.setOffset(8, 8);
 
-            this.chat4 = this.chats.create(1 * 32 + 80, 10 * 32, 'messageChat')
-            this.chat4.setTint(0xff8888);
-            this.chat4.setSize(96, 64);
-            this.chat4.setOffset(0, 0);
+            this.chat4 = this.chats.create(1 * 32 + 80, 10 * 32, 'messageChat_middle');
+            this.chat4.setSize(56, 32);
+            this.chat4.setOffset(8, 8);
+            this.chat4bis = this.chats.create(1 * 32 + 80, 10 * 32, 'messageChat_middle');
+            this.chat4bis.setSize(56, 32);
+            this.chat4bis.setOffset(8 + 96, 8);
 
-            this.chat5 = this.chats.create(1 * 32 + 80, 8 * 32, 'messageChat')
-            this.chat5.setTint(0x000000);
-            this.chat5.setSize(96, 64);
-            this.chat5.setOffset(0, 0);
+            this.chat5 = this.chats.create(1 * 32 + 80, 8 * 32, 'messageChat_left');
+            this.chat5.setSize(96, 32);
+            this.chat5.setOffset(8 + 48, 8);
 
-            this.chat6 = this.chats.create(1 * 32 + 80, 6 * 32, 'messageChat')
-            this.chat6.setTint(0x00ff00);
-            this.chat6.setSize(96, 64);
-            this.chat6.setOffset(0, 0);
+            this.chat6 = this.chats.create(1 * 32 + 80, 6 * 32, 'messageChat_middle');
+            this.chat6.setSize(56, 32);
+            this.chat6.setOffset(8, 8);
+            this.chat6bis = this.chats.create(1 * 32 + 80, 6 * 32, 'messageChat_middle');
+            this.chat6bis.setSize(56, 32);
+            this.chat6bis.setOffset(8 + 96, 8);
 
             this.chatTimer = 0;
             this.chatTop = 6;
@@ -128,7 +131,8 @@ class scene1 extends Phaser.Scene{
             this.physics.add.collider(blocs, this.chats);
 
         //PERSONNAGE
-        this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
+        //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
+        this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');
         this.player.setSize(24, 20)
         this.player.setOffset(4, 12)  
         
@@ -220,12 +224,13 @@ class scene1 extends Phaser.Scene{
         }
 
         function destroytag(raid, tag) {
-            tag.setPushable(true);
+            raid.setPushable(true);
 
             if (raid.body.velocity.x > 0) {tag.setVelocityX(200)}
             else if (raid.body.velocity.x < 0) {tag.setVelocityX(-200)}
             else if (raid.body.velocity.y > 0) {tag.setVelocityY(200)}
             else if (raid.body.velocity.y < 0) {tag.setVelocityY(-200)}
+            else {tag.setVelocityY(30);}
 
             raid.destroy();
         }
@@ -237,7 +242,7 @@ class scene1 extends Phaser.Scene{
             z:  Phaser.Input.Keyboard.KeyCodes.Z,
         });
 
-        this.physics.add.collider(this.raids, this.tags, destroytag, null, this);
+        this.physics.add.overlap(this.raids, this.tags, destroytag, null, this);
         this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
 
@@ -302,53 +307,120 @@ class scene1 extends Phaser.Scene{
                 }
             }
 
+            //mouvement du chat
             if (this.chatTop == 6){
                 this.chat1.y = 14*32;
                 this.chat2.y = 12*32;
                 this.chat3.y = 10*32;
                 this.chat4.y = 8*32;
+                this.chat4bis.y = 8*32;
                 this.chat5.y = 6*32;
                 this.chat6.y = 16*32;
+                this.chat6bis.y = 16*32;
+
+                this.chat1.body.y = 13*32 + 8;
+                this.chat2.body.y = 11*32 + 8;
+                this.chat3.body.y = 9*32 + 8;
+                this.chat4.body.y = 7*32 + 8;
+                this.chat4bis.body.y = 7*32 + 8;
+                this.chat5.body.y = 5*32 + 8;
+                this.chat6.body.y = 15*32 + 8;
+                this.chat6bis.body.y = 15*32 + 8;
             }
             else if (this.chatTop == 5){
                 this.chat1.y = 12*32;
                 this.chat2.y = 10*32;
                 this.chat3.y = 8*32;
                 this.chat4.y = 6*32;
+                this.chat4bis.y = 6*32;
                 this.chat5.y = 16*32;
                 this.chat6.y = 14*32;
+                this.chat6bis.y = 14*32;
+
+                this.chat1.body.y = 11*32 + 8;
+                this.chat2.body.y = 9*32 + 8;
+                this.chat3.body.y = 7*32 + 8;
+                this.chat4.body.y = 5*32 + 8;
+                this.chat4bis.body.y = 5*32 + 8;
+                this.chat5.body.y = 15*32 + 8;
+                this.chat6.body.y = 13*32 + 8;
+                this.chat6bis.body.y = 13*32 + 8;
             }
             else if (this.chatTop == 4){
                 this.chat1.y = 10*32;
                 this.chat2.y = 8*32;
                 this.chat3.y = 6*32;
                 this.chat4.y = 16*32;
+                this.chat4bis.y = 16*32;
                 this.chat5.y = 14*32;
                 this.chat6.y = 12*32;
+                this.chat6bis.y = 12*32;
+
+                this.chat1.body.y = 9*32 + 8;
+                this.chat2.body.y = 7*32 + 8;
+                this.chat3.body.y = 5*32 + 8;
+                this.chat4.body.y = 15*32 + 8;
+                this.chat4bis.body.y = 15*32 + 8;
+                this.chat5.body.y = 13*32 + 8;
+                this.chat6.body.y = 11*32 + 8;
+                this.chat6bis.body.y = 11*32 + 8;
             }
             else if (this.chatTop == 3){
                 this.chat1.y = 8*32;
                 this.chat2.y = 6*32;
                 this.chat3.y = 16*32;
                 this.chat4.y = 14*32;
+                this.chat4bis.y = 14*32;
                 this.chat5.y = 12*32;
                 this.chat6.y = 10*32;
+                this.chat6bis.y = 10*32;
+
+                this.chat1.body.y = 7*32 + 8;
+                this.chat2.body.y = 5*32 + 8;
+                this.chat3.body.y = 15*32 + 8;
+                this.chat4.body.y = 13*32 + 8;
+                this.chat4bis.body.y = 13*32 + 8;
+                this.chat5.body.y = 11*32 + 8;
+                this.chat6.body.y = 9*32 + 8;
+                this.chat6bis.body.y = 9*32 + 8;
             }
             else if (this.chatTop == 2){
                 this.chat1.y = 6*32;
                 this.chat2.y = 16*32;
                 this.chat3.y = 14*32;
                 this.chat4.y = 12*32;
+                this.chat4bis.y = 12*32;
                 this.chat5.y = 10*32;
                 this.chat6.y = 8*32;
+                this.chat6bis.y = 8*32;
+
+                this.chat1.body.y = 5*32 + 8;
+                this.chat2.body.y = 15*32 + 8;
+                this.chat3.body.y = 13*32 + 8;
+                this.chat4.body.y = 11*32 + 8;
+                this.chat4bis.body.y = 11*32 + 8;
+                this.chat5.body.y = 9*32 + 8;
+                this.chat6.body.y = 7*32 + 8;
+                this.chat6bis.body.y = 7*32 + 8;
             }
             else if (this.chatTop == 1){
                 this.chat1.y = 16*32;
                 this.chat2.y = 14*32;
                 this.chat3.y = 12*32;
                 this.chat4.y = 10*32;
+                this.chat4bis.y = 10*32;
                 this.chat5.y = 8*32;
                 this.chat6.y = 6*32;
+                this.chat6bis.y = 6*32;
+
+                this.chat1.body.y = 15*32 + 8;
+                this.chat2.body.y = 13*32 + 8;
+                this.chat3.body.y = 11*32 + 8;
+                this.chat4.body.y = 9*32 + 8;
+                this.chat4bis.body.y = 9*32 + 8;
+                this.chat5.body.y = 7*32 + 8;
+                this.chat6.body.y = 5*32 + 8;
+                this.chat6bis.body.y = 5*32 + 8;
             }
 
 
