@@ -82,6 +82,7 @@ class scene1 extends Phaser.Scene{
             this.physics.add.collider(this.tags, blocs);
         
             this.tag1 = this.tags.create(30 * 32 + 16, 8 * 32 + 16, 'tag');
+            this.tag1.setPushable(false);
             this.tag2 = this.tags.create(23 * 32 + 16, 11 * 32 + 16, 'tag');
 
             this.tag3 = this.tags.create(8 * 32 + 16, 13 * 32 + 16, 'tag');
@@ -135,6 +136,8 @@ class scene1 extends Phaser.Scene{
         blocs.setCollisionByProperty({ estSolide: true });       
         this.physics.add.collider(this.player, blocs);
         this.physics.add.collider(this.player, this.chats);
+
+        this.physics.add.collider(this.tags, this.player);
 
         //animation
         this.anims.create({
