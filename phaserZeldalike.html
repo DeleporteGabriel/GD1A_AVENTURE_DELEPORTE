@@ -76,6 +76,11 @@ class scene1 extends Phaser.Scene{
                     tileset
                     );
             emoteblocs.visible = false;
+            const TPblocs = carteDuNiveau.createStaticLayer(
+                    "linkTP",
+                    tileset
+                    );
+            TPblocs.visible = false;
 
             //bloc à pousser
             this.tags = this.physics.add.group()
@@ -144,6 +149,13 @@ class scene1 extends Phaser.Scene{
 
 
         this.physics.add.collider(this.tags, this.player);
+
+        function leTP() {
+            this.scene.start('scene2');
+        }
+
+        TPblocs.setCollisionByProperty({ linkTP: true });
+        this.physics.add.collider(this.player, TPblocs, leTP, null, this);
 
         //animation
         this.anims.create({
@@ -446,7 +458,6 @@ class scene1 extends Phaser.Scene{
         //attaque
 
         if (this.keys.z.isDown) {if (this.attaque == false) {
-            this.scene.start('scene2');
             this.attaque = true;
             if (this.direction == 0) {
                 this.raid = this.raids.create(this.player.x, this.player.y, 'bullet_down');
