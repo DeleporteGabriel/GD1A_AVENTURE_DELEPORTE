@@ -997,6 +997,10 @@ class scene3 extends Phaser.Scene{
         this.load.image('bullet_up', 'assets/raidup.png');
         this.load.image('bullet_down', 'assets/raiddown.png');
 
+        //Ennemis wojak
+        this.load.spritesheet('wojak', 'assets/wojaks.png',
+        {frameWidth: 32, frameHeight: 32});
+
         this.load.tilemapTiledJSON("Background_twitter", 'assets/tiled level/background twitter tiled.json');
         this.load.image("Phaser_tuilesdejeu_twitter", 'assets/tiled level/background twitter.png');
     }
@@ -1010,7 +1014,7 @@ const carteDuNiveau = this.add.tilemap("Background_twitter");
     const tileset = carteDuNiveau.addTilesetImage(
             "background twitter",
             "Phaser_tuilesdejeu_twitter"
-            );                  
+            );
     const tileset2 = carteDuNiveau.addTilesetImage(
              "onglets",
              "ongletsTiled"
@@ -1152,6 +1156,47 @@ this.keys = this.input.keyboard.addKeys({
 
 this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
+//ENNEMIS
+this.anims.create({
+        key: 'wojak_pointing',
+        frames: this.anims.generateFrameNumbers('wojak', {start:4,end:7}),
+        frameRate: 10,
+        repeat: -1
+    });
+this.anims.create({
+        key: 'wojak_nerd',
+        frames: this.anims.generateFrameNumbers('wojak', {start:0,end:3}),
+        frameRate: 10,
+        repeat: -1
+    });
+
+
+this.wojakEnnemis = this.physics.add.group()
+
+
+    carteDuNiveau.getObjectLayer('wojakEnnemis').objects.forEach((wojakEnnemis) => {
+    this.wojak = this.wojakEnnemis.create(wojakEnnemis.x, wojakEnnemis.y, 'wojak');
+    this.wojak.anims.play('wojak_pointing', true);
+    this.wojak.setSize(32, 16);
+    this.wojak.setOffset(0, 16);
+    });
+
+    carteDuNiveau.getObjectLayer('wojakNerd').objects.forEach((wojakEnnemis) => {
+    this.wojak = this.wojakEnnemis.create(wojakEnnemis.x, wojakEnnemis.y, 'wojak');
+    this.wojak.anims.play('wojak_nerd', true);
+    this.wojak.setSize(32, 16);
+    this.wojak.setOffset(0, 16);
+    });
+
+
+function destroyBoth(raid, wojaksss) {
+    raid.destroy();
+    wojaksss.destroy();
+}
+
+this.physics.add.collider(this.raids, this.wojakEnnemis, destroyBoth, null, this);
+this.physics.add.collider(blocs, this.wojakEnnemis)
+
 
 //CAMERA
 this.cameras.main.zoom = 2;
@@ -1169,6 +1214,16 @@ this.PointVie2 = this.add.image(24 + 240 + 48, 24 + 135,'spritePV');
 this.PointVie2.setScrollFactor(0);
 this.PointVie3 = this.add.image(24 + 240 + 48*2, 24 + 135,'spritePV');
 this.PointVie3.setScrollFactor(0);
+
+function playerHit(player, emote) {
+            if (this.invincibleFrame == 0) {
+                this.PointCoeur -= 1;
+                this.invincibleFrame = 40;
+            }
+        }
+
+        this.physics.add.overlap(this.player, this.wojakEnnemis, playerHit, null, this);
+
 }
 
 update(){
@@ -1186,7 +1241,26 @@ update(){
             this.player.setTint(0xffffff);
         }
 
-        //attaque
+        //Ennemis
+        this.wojakEnnemis.children.each(function(enemy) {
+            if (Phaser.Math.Distance.BetweenPoints(this.player, enemy) < 200) {
+            if (this.player.x < enemy.x) {
+            enemy.setVelocityX(-30);
+            }
+            else {
+                enemy.setVelocityX(30);
+            }
+            if (this.player.y < enemy.y) {
+            enemy.setVelocityY(-30);
+            }
+            else {
+                enemy.setVelocityY(30);
+            }
+        } else {enemy.setVelocityY(0); enemy.setVelocityX(0);}
+        }, this);
+
+
+        //Attaque
 
         if (this.keys.z.isDown) {if (this.attaque == false) {
             this.attaque = true;
