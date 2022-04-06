@@ -14,9 +14,41 @@
 <body>
 <script type="text/javascript">
 
+class sceneIntro extends Phaser.Scene{
+    constructor(){
+        super('sceneIntro');
+    }
+
+        preload(){
+            this.load.image('fondIntro', 'assets/ecran titre.png')
+        }
+
+        create(){
+            this.add.image(480, 270, 'fondIntro');
+
+            this.SubsCount = 0;
+            this.PointCoeur = 3;
+        };
+
+        update(){
+
+                this.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : 0, subs : this.SubsCount});
+        };
+}
+
 class scene1 extends Phaser.Scene{
     constructor(){
         super("scene1");
+    }
+
+    init(data)
+    {
+        console.log('init', data);
+
+        this.PointCoeur = data.coeur;
+
+        this.spawnX = data.x;
+        this.spawnY = data.y;
     }
 
     preload(){
@@ -45,6 +77,10 @@ class scene1 extends Phaser.Scene{
         this.load.image('messageChat_right', 'assets/bloc texte 1.png')
         this.load.image('messageChat_left', 'assets/bloc texte 2.png')
         this.load.image('messageChat_middle', 'assets/bloc texte 3.png')
+
+        //Subs
+        this.load.spritesheet('subs', 'assets/subs et emote.png', 
+        {frameWidth: 32, frameHeight: 32})
         
         //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
@@ -150,7 +186,13 @@ class scene1 extends Phaser.Scene{
 
         //PERSONNAGE
         //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
-        this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');
+        if (typeof this.spawnY == 'undefined') {
+            this.spawnY = 0;
+        }
+
+        if (this.spawnY < 100) {this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
+        else {this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'heroWalk');}
+
         this.player.setSize(24, 20)
         this.player.setOffset(4, 12)  
         
@@ -165,10 +207,10 @@ class scene1 extends Phaser.Scene{
         this.physics.add.collider(this.tags, this.player);
 
         function leTP() {
-            this.scene.start('scene2', {coeur : this.PointCoeur});
+            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
         }
         function leTP2() {
-            this.scene.start('scene3', {coeur : this.PointCoeur});
+            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
         }
 
         //TP entre les pages
@@ -628,6 +670,9 @@ class scene2 extends Phaser.Scene{
         console.log('init', data);
 
         this.PointCoeur = data.coeur;
+
+        this.spawnX = data.x;
+        this.spawnY = data.y;
     }
 
 
@@ -691,7 +736,9 @@ linkTPtwitter.visible = false;
 
 //PERSONNAGE
 //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
-this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');
+
+if (this.spawnY < 100) {this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
+else {this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'heroWalk');}
 this.player.setSize(24, 20)
 this.player.setOffset(4, 12)  
 
@@ -702,14 +749,14 @@ blocs.setCollisionByProperty({ estSolide: true });
 this.physics.add.collider(this.player, blocs);
 
 function leTP() {
-            this.scene.start('scene1', {coeur : this.PointCoeur});
+            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
         }
 
 linkTPs.setCollisionByProperty({ linkTP: true });
 this.physics.add.collider(this.player, linkTPs, leTP, null, this);
 
 function leTP2() {
-            this.scene.start('scene3', {coeur : this.PointCoeur});
+            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
         }
 
 linkTPtwitter.setCollisionByProperty({ linkTP: true });
@@ -981,6 +1028,9 @@ class scene3 extends Phaser.Scene{
         console.log('init', data);
 
         this.PointCoeur = data.coeur;
+
+        this.spawnX = data.x;
+        this.spawnY = data.y;
     }
 
     preload() {
@@ -1047,7 +1097,9 @@ linkTPdiscord.visible = false;
 
 //PERSONNAGE
 //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
-this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');
+if (this.spawnY < 100) {this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
+else {this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'heroWalk');}
+
 this.player.setSize(24, 20)
 this.player.setOffset(4, 12)  
 
@@ -1058,10 +1110,10 @@ blocs.setCollisionByProperty({ estSolide: true });
 this.physics.add.collider(this.player, blocs);
 
 function leTP() {
-            this.scene.start('scene1', {coeur : this.PointCoeur});
+            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
         }
 function leTP2() {
-            this.scene.start('scene2', {coeur : this.PointCoeur});
+            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
         }
 
 linkTPs.setCollisionByProperty({ linkTP: true });
@@ -1393,7 +1445,7 @@ var config = {
         }},
         pixelArt: true,
         roundPixels: true,
-        scene: [scene1, scene2, scene3]
+        scene: [sceneIntro, scene1, scene2, scene3]
         };
 
         new Phaser.Game(config);
