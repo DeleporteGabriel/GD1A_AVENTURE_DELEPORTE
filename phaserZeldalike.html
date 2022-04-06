@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" /><title>Mon 1er jeu Phaser</title>
+<meta charset="UTF-8" /><title>Mon 2eme jeu Phaser</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js">
     </script>
 
@@ -28,11 +28,12 @@ class sceneIntro extends Phaser.Scene{
         this.SubsCount = 0;
         this.PointCoeur = 3;
 
-        this.cursors = this.input.keyboard.createCursorKeys();
+        const self = this;
+
         this.startButton = this.add.image(480, 270, 'boutonStart').setInteractive();
 
         this.startButton.on('pointerdown', function (pointer) {
-        this.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : 0, subs : this.SubsCount})
+        self.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : 0, subs : this.SubsCount})
         });
             
 
