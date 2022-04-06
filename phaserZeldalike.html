@@ -20,19 +20,27 @@ class sceneIntro extends Phaser.Scene{
     }
 
         preload(){
+            this.load.image('boutonStart', 'assets/boutonStart.png')
             this.load.image('fondIntro', 'assets/ecran titre.png')
         }
 
         create(){
-            this.add.image(480, 270, 'fondIntro');
+        this.SubsCount = 0;
+        this.PointCoeur = 3;
 
-            this.SubsCount = 0;
-            this.PointCoeur = 3;
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.startButton = this.add.image(480, 270, 'boutonStart').setInteractive();
+
+        this.startButton.on('pointerdown', function (pointer) {
+        this.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : 0, subs : this.SubsCount})
+        });
+            
+
+        this.add.image(480, 270, 'fondIntro');
         };
 
         update(){
-
-                this.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : 0, subs : this.SubsCount});
+            //this.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : 0, subs : this.SubsCount})
         };
 }
 
