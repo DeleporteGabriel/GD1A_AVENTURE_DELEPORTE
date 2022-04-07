@@ -25,11 +25,7 @@ class sceneIntro extends Phaser.Scene{
         }
 
         create(){
-        this.SubsCount = 0;
-        this.PointCoeur = 3;
 
-        this.subsMap = new Map([
-        ]);
 
         const self = this;
 
@@ -37,7 +33,7 @@ class sceneIntro extends Phaser.Scene{
         this.add.image(480, 270, 'fondIntro');
 
         this.startButton.on('pointerdown', function (pointer) {
-        self.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : -1, subs : this.SubsCount, map: this.subsMap})
+        self.scene.start('scene1', {coeur : 0, x : 0, y : -1, subs : 0, map : new Map ([[1, "one"]])})
         });
             
         };
@@ -201,6 +197,7 @@ class scene1 extends Phaser.Scene{
 
         //PERSONNAGE
         //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
+
         if (this.spawnY == -1) {
             this.player = this.physics.add.sprite(28 * 32 + 16, 2 * 32 + 16, 'heroWalk');
         }
@@ -376,7 +373,7 @@ class scene1 extends Phaser.Scene{
             sub.destroy();
             this.SubsCount += 1;
             this.textSubs.setText("Nombre de Subs : " + this.SubsCount);
-            //this.subsMap.set("oui", 1);
+            this.subsMap.set("1", "oui");
         }
 
         this.physics.add.collider(this.player, this.subsGroup, recolteSub, null, this)
