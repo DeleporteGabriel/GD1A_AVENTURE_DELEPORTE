@@ -28,16 +28,18 @@ class sceneIntro extends Phaser.Scene{
         this.SubsCount = 0;
         this.PointCoeur = 3;
 
+        this.subsMap = new Map([
+        ]);
+
         const self = this;
 
-        this.startButton = this.add.image(480, 270, 'boutonStart').setInteractive();
+        this.startButton = this.add.image(481, 418, 'boutonStart').setInteractive();
+        this.add.image(480, 270, 'fondIntro');
 
         this.startButton.on('pointerdown', function (pointer) {
-        self.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : 0, subs : this.SubsCount})
+        self.scene.start('scene1', {coeur : this.PointCoeur, x : 0, y : -1, subs : this.SubsCount, map: this.subsMap})
         });
             
-
-        this.add.image(480, 270, 'fondIntro');
         };
 
         update(){
@@ -58,6 +60,10 @@ class scene1 extends Phaser.Scene{
 
         this.spawnX = data.x;
         this.spawnY = data.y;
+
+        this.SubsCount = data.subs;
+
+        this.subsMap = data.map;
     }
 
     preload(){
@@ -195,11 +201,10 @@ class scene1 extends Phaser.Scene{
 
         //PERSONNAGE
         //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
-        if (typeof this.spawnY == 'undefined') {
-            this.spawnY = 0;
+        if (this.spawnY == -1) {
+            this.player = this.physics.add.sprite(28 * 32 + 16, 2 * 32 + 16, 'heroWalk');
         }
-
-        if (this.spawnY < 100) {this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
+        else if (this.spawnY < 100) {this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
         else {this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'heroWalk');}
 
         this.player.setSize(24, 20)
@@ -216,10 +221,10 @@ class scene1 extends Phaser.Scene{
         this.physics.add.collider(this.tags, this.player);
 
         function leTP() {
-            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
+            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
         }
         function leTP2() {
-            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
+            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
         }
 
         //TP entre les pages
@@ -348,6 +353,35 @@ class scene1 extends Phaser.Scene{
         emoteblocs.setCollisionByProperty({ emoteSolide: true });
         this.physics.add.collider(this.emotes, emoteblocs);
         
+        //SUBS
+        this.anims.create({
+                key: 'subsHovering',
+                frames: this.anims.generateFrameNumbers('subs', {start:0,end:3}),
+                frameRate: 10,
+                repeat: -1
+            });
+
+
+        this.subsGroup = this.physics.add.group()
+
+
+        carteDuNiveau.getObjectLayer('subsGroup').objects.forEach((subsGroup) => {
+        this.sub = this.subsGroup.create(subsGroup.x + 16, subsGroup.y - 16, 'subs');
+        this.sub.anims.play('subsHovering', true);
+        //this.sub.setSize(32, 16);
+        //this.sub.setOffset(0, 16);
+        });
+
+        function recolteSub(player, sub){
+            sub.destroy();
+            this.SubsCount += 1;
+            this.textSubs.setText("Nombre de Subs : " + this.SubsCount);
+            //this.subsMap.set("oui", 1);
+        }
+
+        this.physics.add.collider(this.player, this.subsGroup, recolteSub, null, this)
+
+
 
         //CAMERA
         this.cameras.main.zoom = 2;
@@ -383,6 +417,10 @@ class scene1 extends Phaser.Scene{
         }
 
         this.physics.add.overlap(this.player, this.emotes, playerHit, null, this);
+
+        this.textSubs = this.add.text(250, 180, "Nombre de Subs : " + this.SubsCount);
+        this.textSubs.setTint(0x880088);
+        this.textSubs.setScrollFactor(0);
 
     }
 //UPDATE UPDATE UPDATE UPDATE UPDATE UPDATE UPDATE UPDATE
@@ -682,6 +720,10 @@ class scene2 extends Phaser.Scene{
 
         this.spawnX = data.x;
         this.spawnY = data.y;
+
+        this.SubsCount = data.subs;
+
+        this.subsMap = data.map;
     }
 
 
@@ -758,14 +800,14 @@ blocs.setCollisionByProperty({ estSolide: true });
 this.physics.add.collider(this.player, blocs);
 
 function leTP() {
-            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
+            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
         }
 
 linkTPs.setCollisionByProperty({ linkTP: true });
 this.physics.add.collider(this.player, linkTPs, leTP, null, this);
 
 function leTP2() {
-            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
+            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
         }
 
 linkTPtwitter.setCollisionByProperty({ linkTP: true });
@@ -857,6 +899,33 @@ this.keys = this.input.keyboard.addKeys({
 
 this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
+        //SUBS
+        this.anims.create({
+                key: 'subsHovering',
+                frames: this.anims.generateFrameNumbers('subs', {start:0,end:3}),
+                frameRate: 10,
+                repeat: -1
+            });
+
+
+        this.subsGroup = this.physics.add.group()
+
+
+        carteDuNiveau.getObjectLayer('subsGroup').objects.forEach((subsGroup) => {
+        this.sub = this.subsGroup.create(subsGroup.x + 16, subsGroup.y - 16, 'subs');
+        this.sub.anims.play('subsHovering', true);
+        //this.sub.setSize(32, 16);
+        //this.sub.setOffset(0, 16);
+        });
+
+        function recolteSub(player, sub){
+            sub.destroy();
+            this.SubsCount += 1;
+            this.textSubs.setText("Nombre de Subs : " + this.SubsCount);
+        }
+
+        this.physics.add.collider(this.player, this.subsGroup, recolteSub, null, this)
+
 
 //CAMERA
 this.cameras.main.zoom = 2;
@@ -874,6 +943,10 @@ this.PointVie2 = this.add.image(24 + 240 + 48, 24 + 135,'spritePV');
 this.PointVie2.setScrollFactor(0);
 this.PointVie3 = this.add.image(24 + 240 + 48*2, 24 + 135,'spritePV');
 this.PointVie3.setScrollFactor(0);
+
+this.textSubs = this.add.text(250, 180, "Nombre de Subs : " + this.SubsCount);
+this.textSubs.setTint(0x880088);
+this.textSubs.setScrollFactor(0);
 }
 
 update(){
@@ -1040,6 +1113,10 @@ class scene3 extends Phaser.Scene{
 
         this.spawnX = data.x;
         this.spawnY = data.y;
+
+        this.SubsCount = data.subs;
+
+        this.subsMap = data.map;
     }
 
     preload() {
@@ -1119,10 +1196,10 @@ blocs.setCollisionByProperty({ estSolide: true });
 this.physics.add.collider(this.player, blocs);
 
 function leTP() {
-            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
+            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
         }
 function leTP2() {
-            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount});
+            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
         }
 
 linkTPs.setCollisionByProperty({ linkTP: true });
@@ -1258,6 +1335,33 @@ function destroyBoth(raid, wojaksss) {
 this.physics.add.collider(this.raids, this.wojakEnnemis, destroyBoth, null, this);
 this.physics.add.collider(blocs, this.wojakEnnemis)
 
+        //SUBS
+        this.anims.create({
+                key: 'subsHovering',
+                frames: this.anims.generateFrameNumbers('subs', {start:0,end:3}),
+                frameRate: 10,
+                repeat: -1
+            });
+
+
+        this.subsGroup = this.physics.add.group()
+
+
+        carteDuNiveau.getObjectLayer('subsGroup').objects.forEach((subsGroup) => {
+        this.sub = this.subsGroup.create(subsGroup.x + 16, subsGroup.y - 16, 'subs');
+        this.sub.anims.play('subsHovering', true);
+        //this.sub.setSize(32, 16);
+        //this.sub.setOffset(0, 16);
+        });
+
+        function recolteSub(player, sub){
+            sub.destroy();
+            this.SubsCount += 1;
+            this.textSubs.setText("Nombre de Subs : " + this.SubsCount);
+        }
+
+        this.physics.add.collider(this.player, this.subsGroup, recolteSub, null, this)
+
 
 //CAMERA
 this.cameras.main.zoom = 2;
@@ -1285,6 +1389,9 @@ function playerHit(player, emote) {
 
         this.physics.add.overlap(this.player, this.wojakEnnemis, playerHit, null, this);
 
+this.textSubs = this.add.text(250, 180, "Nombre de Subs : " + this.SubsCount);
+this.textSubs.setTint(0x880088);
+this.textSubs.setScrollFactor(0);
 }
 
 update(){

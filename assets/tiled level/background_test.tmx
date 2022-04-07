@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="1">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="16">
  <editorsettings>
   <export target="background_test..json" format="json"/>
  </editorsettings>
@@ -281,4 +281,21 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="10" name="subsGroup">
+  <object id="1" gid="7" x="156" y="109" width="32" height="32"/>
+  <object id="2" gid="7" x="36" y="126" width="32" height="32"/>
+  <object id="3" gid="7" x="257" y="416" width="32" height="32"/>
+  <object id="4" gid="7" x="890" y="399" width="32" height="32"/>
+  <object id="5" gid="7" x="928" y="522" width="32" height="32"/>
+  <object id="6" gid="7" x="586" y="108" width="32" height="32"/>
+  <object id="7" gid="7" x="720" y="95" width="32" height="32"/>
+  <object id="8" gid="7" x="485" y="130" width="32" height="32"/>
+  <object id="9" gid="7" x="409" y="112" width="32" height="32"/>
+  <object id="10" gid="7" x="578" y="331" width="32" height="32"/>
+  <object id="11" gid="7" x="330" y="300" width="32" height="32"/>
+  <object id="12" gid="7" x="407" y="243" width="32" height="32"/>
+  <object id="13" gid="7" x="559" y="480" width="32" height="32"/>
+  <object id="14" gid="7" x="617" y="414" width="32" height="32"/>
+  <object id="15" gid="7" x="371" y="523" width="32" height="32"/>
+ </objectgroup>
 </map>
