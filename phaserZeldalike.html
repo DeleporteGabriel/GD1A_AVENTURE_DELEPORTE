@@ -33,7 +33,7 @@ class sceneIntro extends Phaser.Scene{
         this.add.image(480, 270, 'fondIntro');
 
         this.startButton.on('pointerdown', function (pointer) {
-        self.scene.start('scene1', {coeur : 3, x : 0, y : -1, subs : 0, map : new Map ([[1, "one"]])})
+        self.scene.start('scene1', {coeur : 3, x : 0, y : -1, subs : 0, map : new Map ([[1, "one"]]), raid : false})
         });
             
         };
@@ -60,6 +60,8 @@ class scene1 extends Phaser.Scene{
         this.SubsCount = data.subs;
 
         this.subsMap = data.map;
+
+        this.raidPU = data.raid;
     }
 
     preload(){
@@ -218,10 +220,10 @@ class scene1 extends Phaser.Scene{
         this.physics.add.collider(this.tags, this.player);
 
         function leTP() {
-            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
+            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
         }
         function leTP2() {
-            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
+            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
         }
 
         //TP entre les pages
@@ -727,6 +729,8 @@ class scene2 extends Phaser.Scene{
         this.SubsCount = data.subs;
 
         this.subsMap = data.map;
+
+        this.raidPU = data.raid;
     }
 
 
@@ -803,14 +807,14 @@ blocs.setCollisionByProperty({ estSolide: true });
 this.physics.add.collider(this.player, blocs);
 
 function leTP() {
-            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
+            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
         }
 
 linkTPs.setCollisionByProperty({ linkTP: true });
 this.physics.add.collider(this.player, linkTPs, leTP, null, this);
 
 function leTP2() {
-            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
+            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
         }
 
 linkTPtwitter.setCollisionByProperty({ linkTP: true });
@@ -1120,6 +1124,8 @@ class scene3 extends Phaser.Scene{
         this.SubsCount = data.subs;
 
         this.subsMap = data.map;
+
+        this.raidPU = data.raid;
     }
 
     preload() {
@@ -1135,6 +1141,8 @@ class scene3 extends Phaser.Scene{
         this.load.image('bullet_right', 'assets/raidright.png');
         this.load.image('bullet_up', 'assets/raidup.png');
         this.load.image('bullet_down', 'assets/raiddown.png');
+
+        this.load.image('modo', 'assets/moderateurPowerUp.png');
 
         //Ennemis wojak
         this.load.spritesheet('wojak', 'assets/wojaks.png',
@@ -1211,7 +1219,7 @@ carteDuNiveau.getObjectLayer('mineQRT').objects.forEach((mineQRT) => {
 
 //PERSONNAGE
 //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
-if (this.spawnY < 100) {this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
+if (this.spawnY < 100) {this.player = this.physics.add.sprite(6 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
 else {this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'heroWalk');}
 
 this.player.setSize(24, 20)
@@ -1224,10 +1232,10 @@ blocs.setCollisionByProperty({ estSolide: true });
 this.physics.add.collider(this.player, blocs);
 
 function leTP() {
-            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
+            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
         }
 function leTP2() {
-            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap});
+            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
         }
 
 linkTPs.setCollisionByProperty({ linkTP: true });
@@ -1321,6 +1329,16 @@ this.keys = this.input.keyboard.addKeys({
 });
 
 this.physics.add.collider(this.raids, blocs, hitraids, null, this);
+
+this.modo = this.physics.add.sprite(3 * 32 + 16, 11 * 32 + 16, 'modo');
+
+function PowerUp(player, modo) {
+    modo.destroy();
+    this.raidPU = true;
+
+}
+
+this.physics.add.collider(this.player, this.modo, PowerUp, null, this);
 
 //ENNEMIS
 //loot a recup
