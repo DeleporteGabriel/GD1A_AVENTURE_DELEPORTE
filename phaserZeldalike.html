@@ -33,7 +33,7 @@ class sceneIntro extends Phaser.Scene{
         this.add.image(480, 270, 'fondIntro');
 
         this.startButton.on('pointerdown', function (pointer) {
-        self.scene.start('scene1', {coeur : 3, x : 0, y : -1, subs : 0, map : new Map ([[1, "one"]]), raid : false})
+        self.scene.start('scene1', {coeur : 3, x : 0, y : -1, subs : 0, map : new Map ([[1, "one"]]), raid : false, super : false})
         });
             
         };
@@ -62,6 +62,7 @@ class scene1 extends Phaser.Scene{
         this.subsMap = data.map;
 
         this.raidPU = data.raid;
+        this.superPU = data.super;
     }
 
     preload(){
@@ -84,6 +85,8 @@ class scene1 extends Phaser.Scene{
         this.load.image('bullet_right', 'assets/raidright.png');
         this.load.image('bullet_up', 'assets/raidup.png');
         this.load.image('bullet_down', 'assets/raiddown.png');
+
+        this.load.image('modo', 'assets/moderateurPowerUp.png');
 
         //decors
         this.load.image('tag', 'assets/tag.png')
@@ -220,10 +223,10 @@ class scene1 extends Phaser.Scene{
         this.physics.add.collider(this.tags, this.player);
 
         function leTP() {
-            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
+            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU, super : this.superPU});
         }
         function leTP2() {
-            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
+            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU, super : this.superPU});
         }
 
         //TP entre les pages
@@ -332,6 +335,16 @@ class scene1 extends Phaser.Scene{
         this.physics.add.overlap(this.raids, this.tags, destroytag, null, this);
         this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
+        if (this.raidPU == false){
+            this.modo = this.physics.add.sprite(29 * 32 + 16, 15 * 32 + 16, 'modo');
+
+            function PowerUp(player, modo) {
+            modo.destroy();
+            this.raidPU = true;
+            }
+
+            this.physics.add.collider(this.player, this.modo, PowerUp, null, this);
+    }
 
         //EMOTE
 
@@ -580,6 +593,7 @@ class scene1 extends Phaser.Scene{
 
         //attaque
 
+        if (this.raidPU == true) {
         if (this.keys.z.isDown) {if (this.attaque == false) {
             this.attaque = true;
             if (this.direction == 0) {
@@ -600,7 +614,7 @@ class scene1 extends Phaser.Scene{
             }
             this.raid.setSize(20, 20);
             this.raid.setOffset(8, 8);
-        }}
+        }}}
 
         //Déplacement vertical
         if (this.cursors.up.isDown){
@@ -731,6 +745,7 @@ class scene2 extends Phaser.Scene{
         this.subsMap = data.map;
 
         this.raidPU = data.raid;
+        this.superPU = data.super;
     }
 
 
@@ -750,6 +765,8 @@ class scene2 extends Phaser.Scene{
 
         this.load.tilemapTiledJSON("Background_discord", 'assets/tiled level/background discord.json');
         this.load.image("Phaser_tuilesdejeu_discord", 'assets/tiled level/background discord.png');
+
+        this.load.image('tagNotif', 'assets/tagNotif.png')
     }
 
     create(){  
@@ -792,10 +809,21 @@ const carteDuNiveau = this.add.tilemap("Background_discord");
 linkTPs.visible = false;
 linkTPtwitter.visible = false;
 
+            //bloc à pousser
+            this.tags = this.physics.add.group()
+
+            this.physics.add.collider(this.tags, blocs, function TagWall(tag, blocs){tag.setPushable(false);});
+        
+            this.tag1 = this.tags.create(19 * 32 + 16, 11 * 32 + 16, 'tagNotif');
+            this.tag1.setPushable(false);
+            this.tag2 = this.tags.create(21 * 32 + 16, 3 * 32 + 16, 'tagNotif');
+            this.tag2.setPushable(false);
+
+
 //PERSONNAGE
 //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
 
-if (this.spawnY < 100) {this.player = this.physics.add.sprite(3 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
+if (this.spawnY < 100) {this.player = this.physics.add.sprite(14 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
 else {this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'heroWalk');}
 this.player.setSize(24, 20)
 this.player.setOffset(4, 12)  
@@ -806,15 +834,17 @@ this.attaque = false;
 blocs.setCollisionByProperty({ estSolide: true });       
 this.physics.add.collider(this.player, blocs);
 
+this.physics.add.collider(this.tags, this.player);
+
 function leTP() {
-            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
+            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU, super : this.superPU});
         }
 
 linkTPs.setCollisionByProperty({ linkTP: true });
 this.physics.add.collider(this.player, linkTPs, leTP, null, this);
 
 function leTP2() {
-            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
+            this.scene.start('scene3', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU, super : this.superPU});
         }
 
 linkTPtwitter.setCollisionByProperty({ linkTP: true });
@@ -904,6 +934,19 @@ this.keys = this.input.keyboard.addKeys({
     z:  Phaser.Input.Keyboard.KeyCodes.Z,
 });
 
+function destroytag(raid, tag) {
+            raid.setPushable(true);
+
+            if (raid.body.velocity.x > 0) {tag.setVelocityX(200)}
+            else if (raid.body.velocity.x < 0) {tag.setVelocityX(-200)}
+            else if (raid.body.velocity.y > 0) {tag.setVelocityY(200)}
+            else if (raid.body.velocity.y < 0) {tag.setVelocityY(-200)}
+            else {tag.setVelocityY(30);}
+
+            raid.destroy();
+        }
+
+this.physics.add.overlap(this.raids, this.tags, destroytag, null, this);
 this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
         //SUBS
@@ -917,10 +960,16 @@ this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
         this.subsGroup = this.physics.add.group()
 
+        this.name = 200;
 
         carteDuNiveau.getObjectLayer('subsGroup').objects.forEach((subsGroup) => {
         this.sub = this.subsGroup.create(subsGroup.x + 16, subsGroup.y - 16, 'subs');
         this.sub.anims.play('subsHovering', true);
+        this.sub.setName(this.name);
+        if (this.subsMap.get(this.name) == this.name) {
+            this.sub.destroy();
+        }
+        this.name++;
         //this.sub.setSize(32, 16);
         //this.sub.setOffset(0, 16);
         });
@@ -929,6 +978,7 @@ this.physics.add.collider(this.raids, blocs, hitraids, null, this);
             sub.destroy();
             this.SubsCount += 1;
             this.textSubs.setText("Nombre de Subs : " + this.SubsCount);
+            this.subsMap.set(sub.name, sub.name);
         }
 
         this.physics.add.collider(this.player, this.subsGroup, recolteSub, null, this)
@@ -972,7 +1022,7 @@ update(){
         }
 
         //attaque
-
+        if (this.raidPU == true) {
         if (this.keys.z.isDown) {if (this.attaque == false) {
             this.attaque = true;
             if (this.direction == 0) {
@@ -993,7 +1043,7 @@ update(){
             }
             this.raid.setSize(20, 20);
             this.raid.setOffset(8, 8);
-        }}
+        }}}
 
         //Déplacement vertical
         if (this.cursors.up.isDown){
@@ -1126,6 +1176,7 @@ class scene3 extends Phaser.Scene{
         this.subsMap = data.map;
 
         this.raidPU = data.raid;
+        this.superPU = data.super;
     }
 
     preload() {
@@ -1219,7 +1270,7 @@ carteDuNiveau.getObjectLayer('mineQRT').objects.forEach((mineQRT) => {
 
 //PERSONNAGE
 //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
-if (this.spawnY < 100) {this.player = this.physics.add.sprite(6 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
+if (this.spawnY < 100) {this.player = this.physics.add.sprite(8 * 32 + 16, 2 * 32 + 16, 'heroWalk');}
 else {this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'heroWalk');}
 
 this.player.setSize(24, 20)
@@ -1232,10 +1283,10 @@ blocs.setCollisionByProperty({ estSolide: true });
 this.physics.add.collider(this.player, blocs);
 
 function leTP() {
-            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
+            this.scene.start('scene1', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU, super : this.superPU});
         }
 function leTP2() {
-            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU});
+            this.scene.start('scene2', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU, super : this.superPU});
         }
 
 linkTPs.setCollisionByProperty({ linkTP: true });
@@ -1330,15 +1381,14 @@ this.keys = this.input.keyboard.addKeys({
 
 this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
+if (this.superPU == false){
 this.modo = this.physics.add.sprite(3 * 32 + 16, 11 * 32 + 16, 'modo');
-
 function PowerUp(player, modo) {
     modo.destroy();
-    this.raidPU = true;
-
+    this.superPU = true;
 }
-
 this.physics.add.collider(this.player, this.modo, PowerUp, null, this);
+}
 
 //ENNEMIS
 //loot a recup
@@ -1513,7 +1563,7 @@ update(){
         }, this);
 
         //Attaque
-
+        if (this.raidPU == true) {
         if (this.keys.z.isDown) {if (this.attaque == false) {
             this.attaque = true;
             if (this.direction == 0) {
@@ -1534,7 +1584,7 @@ update(){
             }
             this.raid.setSize(20, 20);
             this.raid.setOffset(8, 8);
-        }}
+        }}}
 
         //Déplacement vertical
         if (this.cursors.up.isDown){

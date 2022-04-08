@@ -45,7 +45,7 @@
          "name":"emote_wall",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":32,
          "x":0,
          "y":0
@@ -136,8 +136,8 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":928,
-                 "y":522
+                 "x":869,
+                 "y":512
                 }, 
                 {
                  "gid":7,
@@ -258,6 +258,18 @@
                  "width":32,
                  "x":371,
                  "y":523
+                }, 
+                {
+                 "gid":7,
+                 "height":32,
+                 "id":16,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":705,
+                 "y":349
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -266,7 +278,7 @@
          "y":0
         }],
  "nextlayerid":11,
- "nextobjectid":16,
+ "nextobjectid":17,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.7.2",

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="16">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="17">
  <editorsettings>
   <export target="background_test..json" format="json"/>
  </editorsettings>
@@ -215,7 +215,7 @@
 21,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,22,33,33,33,33,33,33,23
 </data>
  </layer>
- <layer id="3" name="emote_wall" width="32" height="18">
+ <layer id="3" name="emote_wall" width="32" height="18" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -286,7 +286,7 @@
   <object id="2" gid="7" x="36" y="126" width="32" height="32"/>
   <object id="3" gid="7" x="257" y="416" width="32" height="32"/>
   <object id="4" gid="7" x="890" y="399" width="32" height="32"/>
-  <object id="5" gid="7" x="928" y="522" width="32" height="32"/>
+  <object id="5" gid="7" x="869" y="512" width="32" height="32"/>
   <object id="6" gid="7" x="586" y="108" width="32" height="32"/>
   <object id="7" gid="7" x="720" y="95" width="32" height="32"/>
   <object id="8" gid="7" x="485" y="130" width="32" height="32"/>
@@ -297,5 +297,6 @@
   <object id="13" gid="7" x="559" y="480" width="32" height="32"/>
   <object id="14" gid="7" x="617" y="414" width="32" height="32"/>
   <object id="15" gid="7" x="371" y="523" width="32" height="32"/>
+  <object id="16" gid="7" x="705" y="349" width="32" height="32"/>
  </objectgroup>
 </map>

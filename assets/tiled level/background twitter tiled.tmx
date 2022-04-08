@@ -251,7 +251,7 @@
  </layer>
  <objectgroup id="6" name="wojakEnnemis">
   <object id="9" gid="6" x="428.667" y="124.667" width="32" height="32"/>
-  <object id="10" gid="6" x="121.333" y="175.333" width="32" height="32"/>
+  <object id="10" gid="6" x="94.6663" y="190" width="32" height="32"/>
   <object id="11" gid="6" x="674" y="126" width="32" height="32"/>
   <object id="12" gid="6" x="508.667" y="197.667" width="32" height="32"/>
   <object id="19" gid="6" x="574.667" y="515.333" width="32" height="32"/>
@@ -260,8 +260,8 @@
   <object id="22" gid="6" x="370.667" y="361.333" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="7" name="wojakNerd">
-  <object id="2" gid="6" x="259.333" y="139.333" width="32" height="32"/>
-  <object id="4" gid="6" x="357.333" y="186" width="32" height="32"/>
+  <object id="2" gid="6" x="60.6663" y="148.666" width="32" height="32"/>
+  <object id="4" gid="6" x="98.6663" y="106" width="32" height="32"/>
   <object id="5" gid="6" x="542" y="126.667" width="32" height="32"/>
   <object id="6" gid="6" x="809.333" y="188.667" width="32" height="32"/>
   <object id="7" gid="6" x="776" y="124" width="32" height="32"/>
