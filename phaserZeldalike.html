@@ -90,6 +90,8 @@ class scene1 extends Phaser.Scene{
 
         //decors
         this.load.image('tag', 'assets/tag.png')
+        this.load.image('categorie', 'assets/categorie.png')
+
         this.load.image('messageChat_right', 'assets/bloc texte 1.png')
         this.load.image('messageChat_left', 'assets/bloc texte 2.png')
         this.load.image('messageChat_middle', 'assets/bloc texte 3.png')
@@ -149,7 +151,7 @@ class scene1 extends Phaser.Scene{
             TPtweet.visible = false;
 
             //bloc à pousser
-            this.tags = this.physics.add.group()
+            this.tags = this.physics.add.group();
 
             this.physics.add.collider(this.tags, blocs, function TagWall(tag, blocs){tag.setPushable(false);});
         
@@ -160,6 +162,10 @@ class scene1 extends Phaser.Scene{
 
             this.tag3 = this.tags.create(8 * 32 + 16, 13 * 32 + 16, 'tag');
             this.tag3.setPushable(false);
+
+            this.categories = this.physics.add.group();
+            this.cate1 = this.categories.create(8 * 32, 5 * 32, 'categorie');
+            this.cate1.setPushable(false);
 
             //bloc qui bougent
             this.chats = this.physics.add.staticGroup();
@@ -218,8 +224,7 @@ class scene1 extends Phaser.Scene{
         blocs.setCollisionByProperty({ estSolide: true });       
         this.physics.add.collider(this.player, blocs);
         this.physics.add.collider(this.player, this.chats);
-
-
+        this.physics.add.collider(this.categories, this.player);
         this.physics.add.collider(this.tags, this.player);
 
         function leTP() {
@@ -334,6 +339,15 @@ class scene1 extends Phaser.Scene{
 
         this.physics.add.overlap(this.raids, this.tags, destroytag, null, this);
         this.physics.add.collider(this.raids, blocs, hitraids, null, this);
+
+        function hitcate(raid, cate){
+            if (this.superPU == true) {
+                cate.destroy();
+            }
+            raid.destroy()
+        }
+
+        this.physics.add.collider(this.raids, this.categories, hitcate, null, this);
 
         if (this.raidPU == false){
             this.modo = this.physics.add.sprite(29 * 32 + 16, 15 * 32 + 16, 'modo');
@@ -766,7 +780,8 @@ class scene2 extends Phaser.Scene{
         this.load.tilemapTiledJSON("Background_discord", 'assets/tiled level/background discord.json');
         this.load.image("Phaser_tuilesdejeu_discord", 'assets/tiled level/background discord.png');
 
-        this.load.image('tagNotif', 'assets/tagNotif.png')
+        this.load.image('tagNotif', 'assets/tagNotif.png');
+        this.load.image('everyone', 'assets/mention.png');
     }
 
     create(){  
@@ -820,6 +835,13 @@ linkTPtwitter.visible = false;
             this.tag2.setPushable(false);
 
 
+            this.mentions = this.physics.add.group()
+            this.mention1 = this.mentions.create(15 * 32, 6 * 32, 'everyone');
+            this.mention1.setPushable(false);
+            this.mention2 = this.mentions.create(2 * 32, 13 * 32, 'everyone');
+            this.mention2.setPushable(false);
+
+
 //PERSONNAGE
 //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
 
@@ -833,7 +855,7 @@ this.attaque = false;
 
 blocs.setCollisionByProperty({ estSolide: true });       
 this.physics.add.collider(this.player, blocs);
-
+this.physics.add.collider(this.player, this.mentions);
 this.physics.add.collider(this.tags, this.player);
 
 function leTP() {
@@ -948,6 +970,15 @@ function destroytag(raid, tag) {
 
 this.physics.add.overlap(this.raids, this.tags, destroytag, null, this);
 this.physics.add.collider(this.raids, blocs, hitraids, null, this);
+
+function hitcate(raid, mention){
+            if (this.superPU == true) {
+                mention.destroy();
+            }
+            raid.destroy()
+        }
+
+this.physics.add.collider(this.raids, this.mentions, hitcate, null, this);
 
         //SUBS
         this.anims.create({
@@ -1193,7 +1224,7 @@ class scene3 extends Phaser.Scene{
         this.load.image('bullet_up', 'assets/raidup.png');
         this.load.image('bullet_down', 'assets/raiddown.png');
 
-        this.load.image('modo', 'assets/moderateurPowerUp.png');
+        this.load.image('prime', 'assets/prime gaming.png');
 
         //Ennemis wojak
         this.load.spritesheet('wojak', 'assets/wojaks.png',
@@ -1382,12 +1413,12 @@ this.keys = this.input.keyboard.addKeys({
 this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
 if (this.superPU == false){
-this.modo = this.physics.add.sprite(3 * 32 + 16, 11 * 32 + 16, 'modo');
-function PowerUp(player, modo) {
-    modo.destroy();
+this.prime = this.physics.add.sprite(3 * 32 + 16, 11 * 32 + 16, 'prime');
+function PowerUp(player, prime) {
+    prime.destroy();
     this.superPU = true;
 }
-this.physics.add.collider(this.player, this.modo, PowerUp, null, this);
+this.physics.add.collider(this.player, this.prime, PowerUp, null, this);
 }
 
 //ENNEMIS
