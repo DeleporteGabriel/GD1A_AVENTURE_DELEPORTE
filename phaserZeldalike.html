@@ -414,7 +414,8 @@ class scene1 extends Phaser.Scene{
         function playerHit(player, emote) {
             if (this.invincibleFrame == 0) {
                 this.PointCoeur -= 1;
-                this.invincibleFrame = 40;
+                this.cameras.main.shake(100, 0.01)
+                this.invincibleFrame = 80;
             }
         }
 
@@ -1138,6 +1139,11 @@ class scene3 extends Phaser.Scene{
         //Ennemis wojak
         this.load.spritesheet('wojak', 'assets/wojaks.png',
         {frameWidth: 32, frameHeight: 32});
+        this.load.image('PVrecovery', 'assets/keurkeur.png')
+
+        //Ennemis RT
+        this.load.image('mineRTdesac', 'assets/mineDesac.png');
+        this.load.image('mineRTreac', 'assets/mineReac.png');
 
         this.load.tilemapTiledJSON("Background_twitter", 'assets/tiled level/background twitter tiled.json');
         this.load.image("Phaser_tuilesdejeu_twitter", 'assets/tiled level/background twitter.png');
@@ -1182,6 +1188,26 @@ const carteDuNiveau = this.add.tilemap("Background_twitter");
 
 linkTPs.visible = false;
 linkTPdiscord.visible = false;
+
+//Mine RT
+
+this.anims.create({
+        key: 'mineDesac',
+        frames: [ { key: 'mineRTdesac', frame: 0 } ],
+        frameRate: 20
+    });
+this.anims.create({
+        key: 'mineReac',
+        frames: [ { key: 'mineRTreac', frame: 0 } ],
+        frameRate: 20
+    });
+
+this.mineQRT = this.physics.add.group();
+
+carteDuNiveau.getObjectLayer('mineQRT').objects.forEach((mineQRT) => {
+    this.mineRT= this.mineQRT.create(mineQRT.x + 16, mineQRT.y - 16, 'mineRTdesac');
+    this.mineRT.setSize(24, 24);
+});
 
 //PERSONNAGE
 //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
@@ -1297,6 +1323,11 @@ this.keys = this.input.keyboard.addKeys({
 this.physics.add.collider(this.raids, blocs, hitraids, null, this);
 
 //ENNEMIS
+//loot a recup
+this.recoveryCoeur = this.physics.add.group();
+
+
+//wojaks
 this.anims.create({
         key: 'wojak_pointing',
         frames: this.anims.generateFrameNumbers('wojak', {start:4,end:7}),
@@ -1332,6 +1363,11 @@ this.wojakEnnemis = this.physics.add.group()
 function destroyBoth(raid, wojaksss) {
     raid.destroy();
     wojaksss.destroy();
+    this.valeur = Phaser.Math.FloatBetween(0, 3);
+    if (this.valeur < 1)
+    {
+        this.keur = this.recoveryCoeur.create(wojaksss.x, wojaksss.y, 'PVrecovery')
+    }
 }
 
 this.physics.add.collider(this.raids, this.wojakEnnemis, destroyBoth, null, this);
@@ -1348,10 +1384,16 @@ this.physics.add.collider(blocs, this.wojakEnnemis)
 
         this.subsGroup = this.physics.add.group()
 
+        this.name = 100;
 
         carteDuNiveau.getObjectLayer('subsGroup').objects.forEach((subsGroup) => {
         this.sub = this.subsGroup.create(subsGroup.x + 16, subsGroup.y - 16, 'subs');
         this.sub.anims.play('subsHovering', true);
+        this.sub.setName(this.name);
+        if (this.subsMap.get(this.name) == this.name) {
+            this.sub.destroy();
+        }
+        this.name++;
         //this.sub.setSize(32, 16);
         //this.sub.setOffset(0, 16);
         });
@@ -1360,6 +1402,7 @@ this.physics.add.collider(blocs, this.wojakEnnemis)
             sub.destroy();
             this.SubsCount += 1;
             this.textSubs.setText("Nombre de Subs : " + this.SubsCount);
+            this.subsMap.set(sub.name, sub.name);
         }
 
         this.physics.add.collider(this.player, this.subsGroup, recolteSub, null, this)
@@ -1385,11 +1428,23 @@ this.PointVie3.setScrollFactor(0);
 function playerHit(player, emote) {
             if (this.invincibleFrame == 0) {
                 this.PointCoeur -= 1;
-                this.invincibleFrame = 40;
+                this.cameras.main.shake(100, 0.01)
+                this.invincibleFrame = 80;
             }
         }
 
-        this.physics.add.overlap(this.player, this.wojakEnnemis, playerHit, null, this);
+function playerRecover(player, keur) {
+    this.PointCoeur += 1;
+    if (this.PointCoeur > 3) {
+        this.PointCoeur = 3;
+    }
+    keur.destroy();
+}
+
+this.physics.add.overlap(this.player, this.wojakEnnemis, playerHit, null, this);
+this.physics.add.overlap(this.player, this.mineQRT, playerHit, null, this);
+
+this.physics.add.overlap(this.player, this.recoveryCoeur, playerRecover, null, this);
 
 this.textSubs = this.add.text(250, 180, "Nombre de Subs : " + this.SubsCount);
 this.textSubs.setTint(0x880088);
@@ -1399,9 +1454,12 @@ this.textSubs.setScrollFactor(0);
 update(){
         //Point de vies
 
-        if (this.PointCoeur < 3) {this.PointVie3.setTexture('spritePVvide');}
-        if (this.PointCoeur < 2) {this.PointVie2.setTexture('spritePVvide');}
-        if (this.PointCoeur < 1) {this.PointVie1.setTexture('spritePVvide');}
+        if (this.PointCoeur < 3) {this.PointVie3.setTexture('spritePVvide');} 
+        else {this.PointVie3.setTexture('spritePV');}
+        if (this.PointCoeur < 2) {this.PointVie2.setTexture('spritePVvide');} 
+        else {this.PointVie2.setTexture('spritePV');}
+        if (this.PointCoeur < 1) {this.PointVie1.setTexture('spritePVvide');} 
+        else {this.PointVie1.setTexture('spritePV');}
 
         if (this.invincibleFrame != 0) {
             this.player.setTint(0xff8888);
@@ -1429,6 +1487,12 @@ update(){
         } else {enemy.setVelocityY(0); enemy.setVelocityX(0);}
         }, this);
 
+
+        this.mineQRT.children.each(function(enemy) {
+            if (Phaser.Math.Distance.BetweenPoints(this.player, enemy) < 75) {
+                enemy.anims.play('mineReac', true);
+            } else {enemy.anims.play('mineDesac', true);}
+        }, this);
 
         //Attaque
 
