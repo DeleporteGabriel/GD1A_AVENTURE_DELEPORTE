@@ -87,6 +87,7 @@ class scene1 extends Phaser.Scene{
         this.load.image('bullet_down', 'assets/raiddown.png');
 
         this.load.image('modo', 'assets/moderateurPowerUp.png');
+        this.load.image('prime', 'assets/prime gaming.png');
 
         //decors
         this.load.image('tag', 'assets/tag.png')
@@ -99,6 +100,8 @@ class scene1 extends Phaser.Scene{
         //Subs
         this.load.spritesheet('subs', 'assets/subs et emote.png', 
         {frameWidth: 32, frameHeight: 32})
+
+        this.load.image('porteFin', 'assets/porte des affilies.png')
         
         //Tiled
         this.load.tilemapTiledJSON("Background", 'assets/tiled level/background_test..json');
@@ -206,6 +209,9 @@ class scene1 extends Phaser.Scene{
             this.physics.add.collider(this.chats, this.chats);
             this.physics.add.collider(blocs, this.chats);
 
+            this.porte = this.physics.add.sprite(32*21, 1*32, 'porteFin');
+            this.porte.setPushable(false);
+
         //PERSONNAGE
         //this.player = this.physics.add.sprite(29 * 32 + 16, 2 * 32 + 16, 'heroWalk');
 
@@ -240,6 +246,15 @@ class scene1 extends Phaser.Scene{
 
         TPblocs.setCollisionByProperty({ linkTP: true });
         this.physics.add.collider(this.player, TPblocs, leTP, null, this);
+
+        function FinirJeu(player, porte) {
+            if (this.SubsCount >= 50) {
+                this.scene.start('sceneIntro', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU, super : this.superPU});
+            }
+        }
+
+        this.physics.add.overlap(this.player, this.porte, FinirJeu, null, this);
+        this.physics.add.collider(this.player, this.porte);
 
         //animation
         this.anims.create({
@@ -355,6 +370,8 @@ class scene1 extends Phaser.Scene{
             function PowerUp(player, modo) {
             modo.destroy();
             this.raidPU = true;
+            this.modoUI = this.add.image(24 + 240, 220,'modo');
+            this.modoUI.setScrollFactor(0);
             }
 
             this.physics.add.collider(this.player, this.modo, PowerUp, null, this);
@@ -410,9 +427,7 @@ class scene1 extends Phaser.Scene{
             this.subsMap.set(sub.name, sub.name);
         }
 
-        this.physics.add.collider(this.player, this.subsGroup, recolteSub, null, this)
-
-
+        this.physics.add.collider(this.player, this.subsGroup, recolteSub, null, this);
 
         //CAMERA
         this.cameras.main.zoom = 2;
@@ -436,6 +451,15 @@ class scene1 extends Phaser.Scene{
         this.PointVie2.setScrollFactor(0);
         this.PointVie3 = this.add.image(24 + 240 + 48*2, 24 + 135,'spritePV');
         this.PointVie3.setScrollFactor(0);
+
+        if (this.raidPU == true) {
+        this.modoUI = this.add.image(24 + 240, 220,'modo');
+        this.modoUI.setScrollFactor(0);
+        }
+        if (this.superPU == true) {
+            this.primeUI = this.add.image(24 + 240 + 32, 220,'prime');
+            this.primeUI.setScrollFactor(0);
+        }
 
         this.afficheSubs = this.add.text(this.player.x, this.player.y, this.SubsCount);
         this.afficheSubs.setScrollFactor(0);
@@ -777,6 +801,9 @@ class scene2 extends Phaser.Scene{
         this.load.image('bullet_up', 'assets/raidup.png');
         this.load.image('bullet_down', 'assets/raiddown.png');
 
+        this.load.image('modo', 'assets/moderateurPowerUp.png');
+        this.load.image('prime', 'assets/prime gaming.png');
+
         this.load.tilemapTiledJSON("Background_discord", 'assets/tiled level/background discord.json');
         this.load.image("Phaser_tuilesdejeu_discord", 'assets/tiled level/background discord.png');
 
@@ -1032,6 +1059,15 @@ this.PointVie2.setScrollFactor(0);
 this.PointVie3 = this.add.image(24 + 240 + 48*2, 24 + 135,'spritePV');
 this.PointVie3.setScrollFactor(0);
 
+if (this.raidPU == true) {
+        this.modoUI = this.add.image(24 + 240, 220,'modo');
+        this.modoUI.setScrollFactor(0);
+        }
+        if (this.superPU == true) {
+            this.primeUI = this.add.image(24 + 240 + 32, 220,'prime');
+            this.primeUI.setScrollFactor(0);
+        }
+
 this.textSubs = this.add.text(250, 180, "Nombre de Subs : " + this.SubsCount);
 this.textSubs.setTint(0x880088);
 this.textSubs.setScrollFactor(0);
@@ -1224,6 +1260,7 @@ class scene3 extends Phaser.Scene{
         this.load.image('bullet_up', 'assets/raidup.png');
         this.load.image('bullet_down', 'assets/raiddown.png');
 
+        this.load.image('modo', 'assets/moderateurPowerUp.png');
         this.load.image('prime', 'assets/prime gaming.png');
 
         //Ennemis wojak
@@ -1417,6 +1454,8 @@ this.prime = this.physics.add.sprite(3 * 32 + 16, 11 * 32 + 16, 'prime');
 function PowerUp(player, prime) {
     prime.destroy();
     this.superPU = true;
+    this.primeUI = this.add.image(24 + 240 + 32, 220,'prime');
+    this.primeUI.setScrollFactor(0); 
 }
 this.physics.add.collider(this.player, this.prime, PowerUp, null, this);
 }
@@ -1539,6 +1578,15 @@ function playerRecover(player, keur) {
     }
     keur.destroy();
 }
+
+if (this.raidPU == true) {
+        this.modoUI = this.add.image(24 + 240, 220,'modo');
+        this.modoUI.setScrollFactor(0);
+        }
+        if (this.superPU == true) {
+            this.primeUI = this.add.image(24 + 240 + 32, 220,'prime');
+            this.primeUI.setScrollFactor(0);
+        }
 
 this.physics.add.overlap(this.player, this.wojakEnnemis, playerHit, null, this);
 this.physics.add.overlap(this.player, this.mineQRT, playerHit, null, this);

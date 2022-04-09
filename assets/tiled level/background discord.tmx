@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="9">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="18">
  <editorsettings>
   <export target="background discord.json" format="json"/>
  </editorsettings>
@@ -255,8 +255,15 @@
   <object id="3" gid="15" x="155.13" y="439.379" width="32" height="32"/>
   <object id="4" gid="15" x="138.461" y="514.943" width="32" height="32"/>
   <object id="5" gid="15" x="72.8985" y="508.276" width="32" height="32"/>
-  <object id="6" gid="15" x="771.863" y="107.121" width="32" height="32"/>
   <object id="7" gid="15" x="815.201" y="472.716" width="32" height="32"/>
   <object id="8" gid="15" x="472.942" y="302.698" width="32" height="32"/>
+  <object id="9" gid="15" x="426" y="537.5" width="32" height="32"/>
+  <object id="10" gid="15" x="365.5" y="456.5" width="32" height="32"/>
+  <object id="11" gid="15" x="669.5" y="302.5" width="32" height="32"/>
+  <object id="13" gid="15" x="907" y="87" width="32" height="32"/>
+  <object id="14" gid="15" x="773" y="163" width="32" height="32"/>
+  <object id="15" gid="15" x="943.5" y="438" width="32" height="32"/>
+  <object id="16" gid="15" x="609.5" y="65.5" width="32" height="32"/>
+  <object id="17" gid="15" x="53.5" y="176" width="32" height="32"/>
  </objectgroup>
 </map>
