@@ -254,7 +254,7 @@ class scene1 extends Phaser.Scene{
 
         function FinirJeu(player, porte) {
             if (this.SubsCount >= 50) {
-                this.scene.start('sceneIntro', {coeur : this.PointCoeur, x : this.player.x, y : this.player.y, subs : this.SubsCount, map: this.subsMap, raid : this.raidPU, super : this.superPU});
+                this.scene.start('victoire');
             }
         }
 
@@ -474,6 +474,9 @@ class scene1 extends Phaser.Scene{
                 this.PointCoeur -= 1;
                 this.cameras.main.shake(100, 0.01)
                 this.invincibleFrame = 80;
+            }
+            if (this.PointCoeur == 0) {
+                this.scene.start('gameover');
             }
         }
 
@@ -1624,6 +1627,9 @@ function playerHit(player, emote) {
                 this.cameras.main.shake(100, 0.01)
                 this.invincibleFrame = 80;
             }
+            if (this.PointCoeur == 0){
+                this.scene.start('gameover');
+            }
         }
 
 function playerRecover(player, keur) {
@@ -1839,6 +1845,36 @@ update(){
 
 }
 
+class gameover extends Phaser.Scene{
+    constructor(){
+        super('gameover');
+    }
+
+        preload(){
+            this.load.image('gameover', 'assets/gameover.png')
+        }
+
+        create(){
+            this.add.image(480, 270, 'gameover')   
+        };
+}
+
+
+class victoire extends Phaser.Scene{
+    constructor(){
+        super('victoire');
+    }
+
+        preload(){
+            this.load.image('victoire', 'assets/victoire.png')
+        }
+
+        create(){
+            this.add.image(480, 270, 'victoire')           
+        };
+}
+
+
 var config = {
         type: Phaser.AUTO,
         width: 960, height: 540,
@@ -1849,7 +1885,7 @@ var config = {
         }},
         pixelArt: true,
         roundPixels: true,
-        scene: [sceneIntro, scene1, scene2, scene3]
+        scene: [sceneIntro, scene1, scene2, scene3, gameover, victoire]
         };
 
         new Phaser.Game(config);
