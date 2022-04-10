@@ -1,0 +1,2 @@
+flèches du clavier : se déplacer (gauche, droite, haut, bas)
+Z : tirer (une fois le.s power up obtenu.s)
